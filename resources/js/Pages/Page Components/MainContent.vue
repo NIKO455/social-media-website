@@ -2,6 +2,7 @@
 import {ref} from 'vue';
 import Modal from "@/Components/Modal.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
+import PostItem from "@/Components/PostItem.vue";
 
 const showCreatePost = ref(false);
 
@@ -15,7 +16,7 @@ const closeModal = () => {
 </script>
 
 <template>
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-3 mt-4">
         <img
             src="https://www.simplilearn.com/ice9/free_resources_article_thumb/what_is_image_Processing.jpg"
             class="w-12 h-12 rounded-full object-cover" alt="user-image"
@@ -62,6 +63,19 @@ const closeModal = () => {
             </div>
         </Modal>
     </div>
+
+    <hr class="mt-6">
+
+    <div>
+        <PostItem name="Bhupendra Kathayat"
+                  image="https://cdn.pixabay.com/photo/2015/04/19/08/32/marguerite-729510_640.jpg" date="1 hour ago"
+                  description="a statement that tells you how something or someone looks, sounds, etc. : words that describe something or someone. [count] Reporters called the scene “a disaster area,” and I think that was an accurate description. I applied for the position after reading the job description."/>
+
+        <PostItem name="Bhupendra Kathayat"
+                  image="https://cdn.pixabay.com/photo/2015/04/19/08/32/marguerite-729510_640.jpg" date="1 hour ago"
+                  description="a statement that tells you how something or someone looks, sounds, etc. : words that describe something or someone. [count] Reporters called the scene “a disaster area,” and I think that was an accurate description. I applied for the position after reading the job description."/>
+    </div>
+
 </template>
 
 <style scoped>
