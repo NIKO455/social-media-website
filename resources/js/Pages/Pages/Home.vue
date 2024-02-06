@@ -10,9 +10,8 @@ import MainContent from "@/Pages/Page Components/MainContent.vue";
     <Head title="Dashboard"/>
 
     <AuthenticatedLayout>
-        <div class="py-12 ml-3 mr-3">
+        <div class="py-10 ml-3 mr-3 ">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 ">
-
                 <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 dark:text-white">
                     <div class="bg-[#1F2937] p-3 rounded-md">
                         <GroupList/>
@@ -26,7 +25,6 @@ import MainContent from "@/Pages/Page Components/MainContent.vue";
                         <FollowerList/>
                     </div>
                 </div>
-
             </div>
         </div>
     </AuthenticatedLayout>

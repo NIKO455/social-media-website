@@ -67,12 +67,12 @@ const closeModal = () => {
     <hr class="mt-6">
 
     <div>
-        <PostItem name="Bhupendra Kathayat"
-                  image="https://cdn.pixabay.com/photo/2015/04/19/08/32/marguerite-729510_640.jpg" date="1 hour ago"
+        <PostItem name="Bhupendra Kathayat" post_group="Laravel Developer"
+                  avatar="https://cdn.pixabay.com/photo/2015/04/19/08/32/marguerite-729510_640.jpg" date="1 hour ago"
                   description="a statement that tells you how something or someone looks, sounds, etc. : words that describe something or someone. [count] Reporters called the scene “a disaster area,” and I think that was an accurate description. I applied for the position after reading the job description."/>
 
         <PostItem name="Bhupendra Kathayat"
-                  image="https://cdn.pixabay.com/photo/2015/04/19/08/32/marguerite-729510_640.jpg" date="1 hour ago"
+                  avatar="https://cdn.pixabay.com/photo/2015/04/19/08/32/marguerite-729510_640.jpg" date="1 hour ago"
                   description="a statement that tells you how something or someone looks, sounds, etc. : words that describe something or someone. [count] Reporters called the scene “a disaster area,” and I think that was an accurate description. I applied for the position after reading the job description."/>
     </div>
 
