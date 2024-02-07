@@ -46,7 +46,7 @@ function isImage(attachment) {
             <img v-if="avatar" :src="avatar" alt="group-image"
                  class="h-12 w-12 rounded-full object-cover cursor-pointer">
             <div>
-                <div class="text-[16px] font-bold pb-1 flex items-center ">
+                <div class="text-[15px] font-bold pb-1 flex items-center ">
                     <p class="hover:underline cursor-pointer">
                         {{ name }}
                     </p>

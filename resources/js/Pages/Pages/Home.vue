@@ -10,18 +10,18 @@ import MainContent from "@/Pages/Page Components/MainContent.vue";
     <Head title="Dashboard"/>
 
     <AuthenticatedLayout>
-        <div class="py-10 ml-3 mr-3 ">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 ">
-                <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 dark:text-white">
-                    <div class="bg-[#1F2937] p-3 rounded-md">
+        <div class="py-3 ml-3 mr-3 h-full">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 h-full">
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 dark:text-white h-full">
+                    <div class="bg-[#1F2937] p-3 rounded-md md:overflow-auto lg:overflow-auto lg:h-[91%] md:h-[91%] hidden lg:block md:block">
                         <GroupList/>
                     </div>
 
-                    <div class="bg-[#1F2937] p-3 rounded-md lg:col-span-2 md:col-span-2">
+                    <div class="bg-[#1F2937] p-3 rounded-md lg:col-span-2 md:col-span-2 lg:h-[91%] md:h-[91%] md:overflow-auto lg:overflow-auto">
                         <MainContent/>
                     </div>
 
-                    <div class="bg-[#1F2937] p-3 rounded-md">
+                    <div class="bg-[#1F2937] p-3 rounded-md lg:h-[91%] md:h-[91%] md:overflow-auto lg:overflow-auto hidden lg:block md:block">
                         <FollowerList/>
                     </div>
                 </div>
@@ -31,3 +31,10 @@ import MainContent from "@/Pages/Page Components/MainContent.vue";
 
 
 </template>
+
+<style scoped>
+::-webkit-scrollbar {
+    display: none;
+}
+
+</style>

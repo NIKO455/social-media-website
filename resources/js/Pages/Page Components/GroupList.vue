@@ -10,7 +10,7 @@ defineProps({
 </script>
 
 <template>
-    <div class="h-full overflow-auto scrollbar">
+    <div class="h-full">
         <h1 class="text-xl font-bold">My Groups</h1>
         <div class="py-5">
             <div v-if="false" class="text-sm text-gray-500 dark:text-gray-500">
