@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\User;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -59,5 +60,14 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
+    }
+
+    public function profile(User $user): Response
+    {
+        if (Auth::check()) {
+            return Inertia::render('Pages/UserProfile', compact('user'));
+        }
+
+        return Inertia::render('Pages/VisitProfile', compact('user'));
     }
 }

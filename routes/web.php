@@ -16,6 +16,11 @@ use Inertia\Inertia;
 |
 */
 
+
+Route::controller(ProfileController::class)->group(function () {
+    Route::get('/{user:username}', 'profile')->name('profile');
+});
+
 Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::controller(ProfileController::class)->group(function () {
@@ -29,5 +34,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
 });
+
 
 require __DIR__ . '/auth.php';
