@@ -68,6 +68,6 @@ class ProfileController extends Controller
             return Inertia::render('Pages/UserProfile', compact('user'));
         }
 
-        return Inertia::render('Pages/VisitProfile', compact('user'));
+        return Inertia::render('Auth/Login', compact('user'));
     }
 }

@@ -4,7 +4,6 @@ import InputError from '@/Components/InputError.vue';
 import TextInput from '@/Components/TextInput.vue';
 import {Head, Link, useForm} from '@inertiajs/vue3';
 import PrimaryButtonFullWidth from "@/Components/PrimaryButtonFullWidth.vue";
-import PrimaryButton from "@/Components/PrimaryButton.vue";
 
 defineProps({
     canResetPassword: {
