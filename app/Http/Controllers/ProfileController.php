@@ -57,13 +57,18 @@ class ProfileController extends Controller
         $user->delete();
 
         $request->session()->invalidate();
+
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
     }
 
-    public function profile(User $user): Response
+    public function profile($username): Response
     {
+        $user = User::where('username', $username)->first();
+        if(!$user) {
+            abort(404);
+        }
         if (Auth::check()) {
             return Inertia::render('Pages/UserProfile', compact('user'));
         }

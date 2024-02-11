@@ -168,7 +168,7 @@ const showingNavigationDropdown = ref(false);
                 </div>
             </nav>
 
-            <main class="h-full">
+            <main class="h-full overflow-auto">
                 <slot/>
             </main>
         </div>

@@ -18,7 +18,7 @@ use Inertia\Inertia;
 
 
 Route::controller(ProfileController::class)->group(function () {
-    Route::get('/{user:username}', 'profile')->name('profile');
+    Route::get('/u/{user}', 'profile')->name('profile');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
