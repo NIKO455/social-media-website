@@ -39,7 +39,6 @@ const defaultOpen = ref(true);
                             <UpdateProfileInformationForm
                                 :must-verify-email="mustVerifyEmail"
                                 :status="status"
-                                class="max-w-xl"
                             />
                         </DisclosurePanel>
                     </Disclosure>

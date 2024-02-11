@@ -3,8 +3,10 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { Link, useForm, usePage } from '@inertiajs/vue3';
+import {Link, useForm, usePage} from '@inertiajs/vue3';
 import {Disclosure, DisclosureButton, DisclosurePanel} from "@headlessui/vue";
+import TextArea from "@/Components/TextArea.vue";
+
 
 defineProps({
     mustVerifyEmail: {
@@ -20,64 +22,147 @@ const user = usePage().props.auth.user;
 const form = useForm({
     name: user.name,
     email: user.email,
-    username: user.username
+    username: user.username,
+    permanent_address: user.permanent_address,
+    current_address: user.current_address,
+    marital_status: user.marital_status,
+    college: user.college,
+    school: user.school,
+    description: user.description
 });
+
+
 </script>
 
 <template>
     <section>
         <header>
             <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                Update your account's profile information and email address.
+                Update your account's profile all information.
             </p>
         </header>
 
         <form @submit.prevent="form.patch(route('profile.update'))" class="mt-6 space-y-6">
-            <div>
-                <InputLabel for="name" value="Name" />
 
-                <TextInput
-                    id="name"
-                    type="text"
-                    class="mt-1 block w-full"
-                    v-model="form.name"
-                    required
-                    autofocus
-                    autocomplete="name"
-                />
+            <div class="grid sm:grid-cols-2 gap-6 grid-cols-1 justify-between w-full">
 
-                <InputError class="mt-2" :message="form.errors.name" />
-            </div>
+                <div>
+                    <InputLabel for="name" value="Name"/>
+                    <TextInput
+                        id="name"
+                        type="text"
+                        class="mt-1 block w-full"
+                        v-model="form.name"
+                        required
+                        autofocus
+                        autocomplete="name"
+                    />
 
-            <div>
-                <InputLabel for="username" value="Username" />
+                    <InputError class="mt-2" :message="form.errors.name"/>
+                </div>
+                <div>
+                    <InputLabel for="username" value="Username"/>
 
-                <TextInput
-                    id="username"
-                    type="text"
-                    class="mt-1 block w-full"
-                    v-model="form.username"
-                    required
-                    autofocus
-                    autocomplete="username"
-                />
+                    <TextInput
+                        id="username"
+                        type="text"
+                        class="mt-1 block w-full"
+                        v-model="form.username"
+                        required
+                        autofocus
+                        autocomplete="username"
+                    />
 
-                <InputError class="mt-2" :message="form.errors.username" />
-            </div>
+                    <InputError class="mt-2" :message="form.errors.username"/>
+                </div>
+                <div>
+                    <InputLabel for="email" value="Email"/>
 
-            <div>
-                <InputLabel for="email" value="Email" />
+                    <TextInput
+                        id="email"
+                        type="email"
+                        class="mt-1 block w-full"
+                        v-model="form.email"
+                        required
+                        autocomplete="username"
+                    />
 
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autocomplete="username"
-                />
+                    <InputError class="mt-2" :message="form.errors.email"/>
+                </div>
+                <div>
+                    <InputLabel for="permanent_address" value="Permanent Address"/>
+                    <TextInput
+                        id="permanent_address"
+                        type="text"
+                        class="mt-1 block w-full"
+                        v-model="form.permanent_address"
+                        autocomplete="permanent_address"
+                        placeholder="Enter permanent address"
+                    />
+                    <InputError class="mt-2" :message="form.errors.permanent_address"/>
+                </div>
+                <div>
+                    <InputLabel for="current_address" value="Temporary Address"/>
+                    <TextInput
+                        id="current_address"
+                        type="text"
+                        class="mt-1 block w-full"
+                        v-model="form.current_address"
+                        autocomplete="current_address"
+                        placeholder="Enter temporary address"
 
-                <InputError class="mt-2" :message="form.errors.email" />
+                    />
+                    <InputError class="mt-2" :message="form.errors.current_address"/>
+                </div>
+                <div>
+                    <InputLabel for="college" value="College"/>
+                    <TextInput
+                        id="college"
+                        type="text"
+                        class="mt-1 block w-full"
+                        v-model="form.college"
+                        autocomplete="college"
+                        placeholder="Enter your college name"
+
+                    />
+                    <InputError class="mt-2" :message="form.errors.college"/>
+                </div>
+                <div>
+                    <InputLabel for="school" value="School"/>
+                    <TextInput
+                        id="school"
+                        type="text"
+                        class="mt-1 block w-full"
+                        v-model="form.school"
+                        autocomplete="school"
+                        placeholder="Enter your school name"
+
+                    />
+                    <InputError class="mt-2" :message="form.errors.school"/>
+                </div>
+                <div>
+                    <InputLabel for="description" value="Description"/>
+                    <TextArea
+                        id="description"
+                        class="mt-1 block w-full"
+                        v-model="form.description"
+                        autocomplete="description"
+                        placeholder="Write about yourself"
+                    />
+                    <InputError class="mt-2" :message="form.errors.description"/>
+                </div>
+                <div class="lg:mt-[-90px]">
+                    <InputLabel for="marital_status" value="Select Marital Status"/>
+                    <select v-model="form.marital_status" id="marital_status"
+                            class="w-full mt-1 border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                    >
+                        <option value="single" :selected="form.marital_status === 'single'">Single</option>
+                        <option value="married" :selected="form.marital_status === 'married'">Married</option>
+                        <option value="relationship" :selected="form.marital_status === 'relationship'">Relationship</option>
+                    </select>
+                    <InputError class="mt-2" :message="form.errors.marital_status"/>
+                </div>
+
             </div>
 
             <div v-if="mustVerifyEmail && user.email_verified_at === null">

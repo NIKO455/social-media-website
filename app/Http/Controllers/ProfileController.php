@@ -66,7 +66,7 @@ class ProfileController extends Controller
     public function profile($username): Response
     {
         $user = User::where('username', $username)->first();
-        if(!$user) {
+        if (!$user) {
             abort(404);
         }
         if (Auth::check()) {

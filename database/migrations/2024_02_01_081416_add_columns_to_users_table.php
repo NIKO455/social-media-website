@@ -16,12 +16,11 @@ return new class extends Migration
             $table->string('cover_path', 1024)->nullable();
             $table->string('avatar_path', 1024)->nullable();
             $table->longText('description')->nullable();
-            $table->string('address',1024)->nullable();
             $table->string('college',1024)->nullable();
             $table->string('school',1024)->nullable();
             $table->string('permanent_address',1024)->nullable();
             $table->string('current_address',1024)->nullable();
-            $table->string('life_status',1024)->nullable();
+            $table->string('marital_status',1024)->nullable();
         });
     }
 
@@ -35,12 +34,11 @@ return new class extends Migration
             $table->string('cover_path');
             $table->string('avatar_path');
             $table->longText('description');
-            $table->string('address');
             $table->string('college');
             $table->string('school');
             $table->string('permanent_address');
             $table->string('current_address');
-            $table->string('life_status');
+            $table->string('marital_status');
         });
     }
 };
