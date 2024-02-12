@@ -5,9 +5,13 @@ import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import {Link} from '@inertiajs/vue3';
+import {Link, usePage} from '@inertiajs/vue3';
+import PrimaryButton from "@/Components/PrimaryButton.vue";
 
 const showingNavigationDropdown = ref(false);
+
+const authUser = usePage().props.auth.user;
+
 </script>
 
 <template>
@@ -28,7 +32,7 @@ const showingNavigationDropdown = ref(false);
                             </div>
 
                             <!-- Navigation Links -->
-                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex" v-if="$page.props.user.user_status">
                                 <NavLink :href="route('home')" :active="route().current('home')">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                          stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -50,7 +54,7 @@ const showingNavigationDropdown = ref(false);
                         <div class="hidden sm:flex sm:items-center sm:ms-6">
                             <!-- Settings Dropdown -->
                             <div class="ms-3 relative">
-                                <Dropdown align="right" width="48">
+                                <Dropdown v-if="authUser" align="right" width="48">
                                     <template #trigger>
                                         <span class="inline-flex rounded-md">
                                             <button
@@ -83,6 +87,9 @@ const showingNavigationDropdown = ref(false);
                                         </DropdownLink>
                                     </template>
                                 </Dropdown>
+                                <PrimaryButton v-else>
+                                    <a :href="route('login')">Login</a>
+                                </PrimaryButton>
                             </div>
                         </div>
 
@@ -149,7 +156,8 @@ const showingNavigationDropdown = ref(false);
                     </div>
 
                     <!-- Responsive Settings Options -->
-                    <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
+                    <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600"
+                         v-if="authUser">
                         <div class="px-4">
                             <div class="font-medium text-base text-gray-800 dark:text-gray-200">
                                 {{ $page.props.auth.user.name }}

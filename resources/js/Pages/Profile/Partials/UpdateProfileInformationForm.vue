@@ -28,7 +28,9 @@ const form = useForm({
     marital_status: user.marital_status,
     college: user.college,
     school: user.school,
-    description: user.description
+    description: user.description,
+    work_place:user.work_place,
+    occupation:user.occupation
 });
 
 
@@ -88,6 +90,30 @@ const form = useForm({
                     />
 
                     <InputError class="mt-2" :message="form.errors.email"/>
+                </div>
+                <div>
+                    <InputLabel for="occupation" value="Enter occupation"/>
+                    <TextInput
+                        id="occupation"
+                        type="text"
+                        class="mt-1 block w-full"
+                        v-model="form.occupation"
+                        autocomplete="occupation"
+                        placeholder="Enter your profession"
+                    />
+                    <InputError class="mt-2" :message="form.errors.occupation"/>
+                </div>
+                <div>
+                    <InputLabel for="work_place" value="Work Place"/>
+                    <TextInput
+                        id="work_place"
+                        type="text"
+                        class="mt-1 block w-full"
+                        v-model="form.work_place"
+                        autocomplete="work_place"
+                        placeholder="Enter your workplace"
+                    />
+                    <InputError class="mt-2" :message="form.errors.work_place"/>
                 </div>
                 <div>
                     <InputLabel for="permanent_address" value="Permanent Address"/>

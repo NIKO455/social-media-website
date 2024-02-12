@@ -66,13 +66,12 @@ class ProfileController extends Controller
     public function profile($username): Response
     {
         $user = User::where('username', $username)->first();
-        if (!$user) {
-            abort(404);
+        if (!Auth::check()) {
+            $user->user_status = false;
+        } else {
+            $user->user_status = true;
         }
-        if (Auth::check()) {
-            return Inertia::render('Pages/UserProfile', compact('user'));
-        }
+        return Inertia::render('Pages/UserProfile', compact('user'));
 
-        return Inertia::render('Auth/Login', compact('user'));
     }
 }

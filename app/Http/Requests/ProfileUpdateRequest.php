@@ -19,20 +19,22 @@ class ProfileUpdateRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'max:255', Rule::unique(User::class)->ignore($this->user()->id), 'regex:/^(?:[A-Za-z0-9.]+)$/'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($this->user()->id)],
-            'permanent_address'=>['nullable'],
-            'current_address'=>['nullable'],
-            'college'=>['nullable'],
-            'school'=>['nullable'],
-            'marital_status'=>['nullable'],
-            'description'=>['nullable'],
-            'avatar_path'=>['nullable'],
-            'cover_path'=>['nullable']
+            'permanent_address' => ['nullable'],
+            'current_address' => ['nullable'],
+            'college' => ['nullable'],
+            'school' => ['nullable'],
+            'marital_status' => ['nullable'],
+            'description' => ['nullable'],
+            'avatar_path' => ['nullable'],
+            'cover_path' => ['nullable'],
+            'work_place' => ['nullable'],
+            'occupation' => ['nullable']
         ];
     }
 
     public function messages()
     {
-        return[
+        return [
             'username' => 'Username must not contain special characters or spaces',
         ];
     }

@@ -51,7 +51,7 @@ defineProps({user: Object})
                                                 <TabListItem :category="'Followings'" :selected="selected"/>
                                             </Tab>
                                         </div>
-                                        <PrimaryButton v-if="user.id === $page.props.user.id"
+                                        <PrimaryButton v-if="user.user_status"
                                                        class="w-40 profile-edit-button">
                                             <a :href="route('profile.edit')">Edit Profile</a>
                                         </PrimaryButton>
@@ -60,16 +60,16 @@ defineProps({user: Object})
                                     <div class=" w-[97%] m-auto mb-4">
                                         <TabPanels class="mt-2">
                                             <TabPanel :class="['rounded-xl bg-[#111827] dark:text-white p-3','ring-white/60 ring-offset-0 focus:outline-none focus:ring-0',]">
-                                                <AboutContainer/>
+                                                <AboutContainer :user="user"/>
                                             </TabPanel>
                                             <TabPanel :class="['rounded-xl bg-[#111827] dark:text-white p-3','ring-white/60 ring-offset-0 focus:outline-none focus:ring-0',]">
                                                 This is post section
                                             </TabPanel>
                                             <TabPanel :class="['rounded-xl bg-[#111827] dark:text-white p-3','ring-white/60 ring-offset-0 focus:outline-none focus:ring-0',]">
-                                                <FollowersContainer/>
+                                                <FollowersContainer :user="user"/>
                                             </TabPanel>
                                             <TabPanel :class="['rounded-xl bg-[#111827] dark:text-white p-3','ring-white/60 ring-offset-0 focus:outline-none focus:ring-0',]">
-                                                <FollowersContainer/>
+                                                <FollowersContainer :user="user"/>
                                             </TabPanel>
                                         </TabPanels>
                                     </div>

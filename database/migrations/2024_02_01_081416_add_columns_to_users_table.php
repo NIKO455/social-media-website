@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('avatar_path', 1024)->nullable();
             $table->longText('description')->nullable();
             $table->string('college',1024)->nullable();
+            $table->string('work_place',1024)->nullable();
+            $table->string('occupation',1024)->nullable();
             $table->string('school',1024)->nullable();
             $table->string('permanent_address',1024)->nullable();
             $table->string('current_address',1024)->nullable();
@@ -35,6 +37,8 @@ return new class extends Migration
             $table->string('avatar_path');
             $table->longText('description');
             $table->string('college');
+            $table->string('work_place');
+            $table->string('occupation');
             $table->string('school');
             $table->string('permanent_address');
             $table->string('current_address');
