@@ -51,7 +51,7 @@ defineProps({user: Object})
                                                 <TabListItem :category="'Followings'" :selected="selected"/>
                                             </Tab>
                                         </div>
-                                        <PrimaryButton v-if="user.user_status"
+                                        <PrimaryButton
                                                        class="w-40 profile-edit-button">
                                             <a :href="route('profile.edit')">Edit Profile</a>
                                         </PrimaryButton>

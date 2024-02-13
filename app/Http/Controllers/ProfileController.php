@@ -67,10 +67,10 @@ class ProfileController extends Controller
     {
         $user = User::where('username', $username)->first();
         if (!Auth::check()) {
-            $user->user_status = false;
-        } else {
-            $user->user_status = true;
+            return Inertia::render('Pages/VisitProfile', compact('user'));
+
         }
+
         return Inertia::render('Pages/UserProfile', compact('user'));
 
     }
