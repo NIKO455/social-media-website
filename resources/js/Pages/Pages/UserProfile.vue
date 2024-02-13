@@ -2,25 +2,34 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import {Tab, TabGroup, TabList, TabPanel, TabPanels} from "@headlessui/vue";
 import {ref} from "vue";
-import { useForm } from '@inertiajs/vue3'
+import {useForm} from '@inertiajs/vue3'
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
 import TabListItem from "@/Pages/Page Components/TabListItem.vue";
 import AboutContainer from "@/Pages/Page Components/AboutContainer.vue";
 import FollowersContainer from "@/Pages/Page Components/FollowersContainer.vue";
+import Dropdown from "@/Components/Dropdown.vue";
+import DropdownLink from "@/Components/DropdownLink.vue";
+import DropdownLinkButton from "@/Components/DropdownLinkButton.vue";
 
 const {user} = defineProps({user: Object})
 
 let coverImageFile = null;
+let profileImageFile = null;
 const coverImageSrc = ref('');
+const profileImageSrc = ref('');
+
+const coverForm = useForm({
+    cover_path: null,
+})
 
 const form = useForm({
-    cover_path: null,
+    profile_path: null,
 })
 
 function uploadCoverImage(event) {
     coverImageFile = event.target.files[0];
-    form.cover_path = coverImageFile;
+    coverForm.cover_path = coverImageFile;
     if (coverImageFile) {
         const reader = new FileReader();
         reader.onload = () => {
@@ -30,6 +39,21 @@ function uploadCoverImage(event) {
     }
 }
 
+function uploadProfileImage(event) {
+    profileImageFile = event.target.files[0];
+    form.profile_path = profileImageFile;
+    console.log(profileImageFile)
+    if (profileImageFile) {
+        const reader = new FileReader();
+        reader.onload = () => {
+            profileImageSrc.value = reader.result;
+        }
+        reader.readAsDataURL(profileImageFile);
+    }
+    form.post(`/profile/update/${user.id}`)
+
+}
+
 function cancelCoverImage() {
     coverImageFile = null;
     coverImageSrc.value = null;
@@ -37,8 +61,7 @@ function cancelCoverImage() {
 
 
 function submitCoverImage() {
-    console.log(coverImageFile)
-    form.post(`/cover/update/${user.id}`)
+    coverForm.post(`/cover/update/${user.id}`)
 }
 
 
@@ -58,62 +81,71 @@ function submitCoverImage() {
                                     :src="coverImageSrc || user.cover_url || 'https://generalassemb.ly/sites/default/files/styles/program_header_desktop_xxl_1x/public/2023-06/PT_AN_Header_0623.jpg?itok=83sR_pF_'"
                                     alt=""
                                     class="w-full h-[230px] object-cover rounded-tl-lg rounded-tr-lg cover-image">
+                                <div class="absolute right-5 top-5 w-full">
+                                    <button v-if="!coverImageSrc"
+                                            class="cursor-pointer lg:block md:block absolute right-0 top-0 hidden items-center px-2 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150"
+                                    >
+                                        <div class="flex items-center gap-1 cursor-pointer">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                 viewBox="0 0 24 24"
+                                                 stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                      d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z"/>
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                      d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z"/>
+                                            </svg>
+                                            Change Cover Image
+                                            <input type="file" @change="uploadCoverImage"
+                                                   class="absolute top-2 right-2 w-[158px] opacity-0 cursor-pointer">
+                                        </div>
+                                    </button>
 
-                                <button v-if="!coverImageSrc"
-                                        class="cursor-pointer hidden lg:block md:block absolute top-2 right-2 flex items-center px-2 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150"
-                                >
-                                    <div class="flex items-center gap-1 cursor-pointer">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                             stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                  d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z"/>
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                  d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z"/>
-                                        </svg>
-                                        Change Cover Image
-                                        <input type="file" @change="uploadCoverImage"
-                                               class="absolute top-2 right-2 w-[158px] opacity-0 cursor-pointer">
-                                    </div>
-                                </button>
-                                <template v-else>
-                                    <button @click="cancelCoverImage"
-                                            class="cursor-pointer absolute top-2 right-24 lg:block md:block flex items-center px-2 py-2 bg-red-700 dark:bg-red-700 border border-transparent rounded-md font-semibold text-xs text-white hover:bg-red-800 dark:hover:bg-red-800 focus:bg-red-700 dark:focus:bg-red-600 active:bg-red-900 dark:active:bg-red-700 focus:outline-none focus:ring-0 focus:ring-offset-0 dark:focus:ring-offset-0 transition ease-in-out duration-150"
-                                    >
-                                        <div class="flex items-center gap-1 cursor-pointer">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    <PrimaryButton v-if="!coverImageSrc"
+                                                   class="absolute top-2 right-2 flex items-center gap-1 lg:hidden md:hidden">
+                                        <button>
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                 viewBox="0 0 24 24"
                                                  stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
-                                                      d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
-                                            </svg>
-                                            Cancel
-                                        </div>
-                                    </button>
-                                    <button
-                                        @click="submitCoverImage"
-                                        class="cursor-pointer absolute top-2 right-2 lg:block md:block flex items-center px-2 py-2 bg-green-700 dark:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white hover:bg-green-800 dark:hover:bg-green-800 focus:bg-green-700 dark:focus:bg-green-600 active:bg-green-900 dark:active:bg-green-700 focus:outline-none focus:ring-0 focus:ring-offset-0 dark:focus:ring-offset-0 transition ease-in-out duration-150"
-                                    >
-                                        <div class="flex items-center gap-1 cursor-pointer">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                 stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                                      d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z"/>
                                                 <path stroke-linecap="round" stroke-linejoin="round"
-                                                      d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                                                      d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z"/>
                                             </svg>
-                                            Submit
-                                        </div>
-                                    </button>
-                                </template>
-                                <PrimaryButton
-                                    class="absolute top-2 right-2 flex items-center gap-1 lg:hidden md:hidden">
-                                    <button>
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                             stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                  d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z"/>
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                  d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z"/>
-                                        </svg>
-                                    </button>
-                                </PrimaryButton>
+                                            <input type="file" @change="uploadCoverImage"
+                                                   class="absolute top-2 right-2 w-[158px] opacity-0 cursor-pointer">
+                                        </button>
+                                    </PrimaryButton>
+
+                                    <template v-else>
+                                        <button @click="cancelCoverImage"
+                                                class="cursor-pointer absolute top-2 right-24 lg:block md:block flex items-center px-2 py-2 bg-red-700 dark:bg-red-700 border border-transparent rounded-md font-semibold text-xs text-white hover:bg-red-800 dark:hover:bg-red-800 focus:bg-red-700 dark:focus:bg-red-600 active:bg-red-900 dark:active:bg-red-700 focus:outline-none focus:ring-0 focus:ring-offset-0 dark:focus:ring-offset-0 transition ease-in-out duration-150"
+                                        >
+                                            <div class="flex items-center gap-1 cursor-pointer">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                     viewBox="0 0 24 24"
+                                                     stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                          d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                                                </svg>
+                                                Cancel
+                                            </div>
+                                        </button>
+                                        <button
+                                            @click="submitCoverImage"
+                                            class="cursor-pointer absolute top-2 right-2 lg:block md:block flex items-center px-2 py-2 bg-green-700 dark:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white hover:bg-green-800 dark:hover:bg-green-800 focus:bg-green-700 dark:focus:bg-green-600 active:bg-green-900 dark:active:bg-green-700 focus:outline-none focus:ring-0 focus:ring-offset-0 dark:focus:ring-offset-0 transition ease-in-out duration-150"
+                                        >
+                                            <div class="flex items-center gap-1 cursor-pointer">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                     viewBox="0 0 24 24"
+                                                     stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                          d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                                                </svg>
+                                                Submit
+                                            </div>
+                                        </button>
+                                    </template>
+                                </div>
                             </div>
 
                             <div class="w-full px-2 sm:px-0">
@@ -123,23 +155,41 @@ function submitCoverImage() {
                                         <!-- profile image -->
                                         <div class="relative w-[204px] profile-edit">
                                             <img
-                                                src="https://images.pexels.com/photos/1243046/pexels-photo-1243046.jpeg?cs=srgb&dl=pexels-mixu-1243046.jpg&fm=jpg"
+                                                :src="profileImageSrc || user.avatar_url || 'https://i.pinimg.com/736x/8b/16/7a/8b167af653c2399dd93b952a48740620.jpg'"
                                                 alt=""
                                                 class="h-[150px] w-[150px] object-cover rounded-full mt-[-80px]">
-                                            <button
-                                                class="absolute bg-white p-2 top-4 rounded-full right-0 flex items-center gap-1">
-                                                <a href="">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                         viewBox="0 0 24 24"
-                                                         stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                              d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z"/>
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                              d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z"/>
-                                                    </svg>
 
-                                                </a>
-                                            </button>
+                                            <Dropdown align="right bg-transparent" width="48">
+                                                <template #trigger>
+                                                    <button
+                                                        class="absolute top-[-3.5rem] right-[0px] bg-white p-2 rounded-full flex items-center gap-1">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                             viewBox="0 0 24 24"
+                                                             stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                  d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z"/>
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                  d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z"/>
+                                                        </svg>
+                                                    </button>
+                                                </template>
+
+                                                <template #content>
+                                                    <DropdownLinkButton>
+                                                        <div class="relative">
+                                                            <input type="file" name="profile" id="file"
+                                                                   class="absolute opacity-0"
+                                                                   @change="uploadProfileImage">
+                                                            Change Profile
+                                                        </div>
+                                                    </DropdownLinkButton>
+                                                    <DropdownLink
+                                                        :href="route('profile.remove', $page.props.auth.user.id)"
+                                                        method="delete" as="button">
+                                                        Remove Profile
+                                                    </DropdownLink>
+                                                </template>
+                                            </Dropdown>
                                         </div>
 
                                         <div

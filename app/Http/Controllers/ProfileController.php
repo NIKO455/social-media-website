@@ -79,17 +79,27 @@ class ProfileController extends Controller
 
     public function coverPhoto(Request $request, $id): RedirectResponse
     {
-        $user = User::findOrFail($id);
-        $imagePath = $this->uploadFile($request, 'cover_path', '', 'public/users');
+        $user = User::findorFail($id);
+        $oldPath = $user->cover_path;
+        $imagePath = $this->uploadFile($request, 'cover_path', $oldPath, 'public/users');
         $user->update(['cover_path' => $imagePath]);
         return redirect()->back();
     }
 
-    public function profilePhoto(Request $request, $id)
+    public function profilePhoto(Request $request, $id): RedirectResponse
     {
-        $user = User::findOrFail($id);
-        $imagePath = $this->uploadFile($request, 'cover_path', '', 'public/users');
-        $user->update(['cover_path' => $imagePath]);
+        $user = User::findorFail($id);
+        $oldPath = $user->cover_path;
+        $imagePath = $this->uploadFile($request, 'profile_path', $oldPath, 'public/users');
+        $user->update(['avatar_path' => $imagePath]);
+        return redirect()->back();
+    }
+
+    public function removeProfile($id): RedirectResponse
+    {
+        $user = User::findorFail($id);
+        $this->deleteFile($user->avatar_path);
+        $user->update(['avatar_path' => null]);
         return redirect()->back();
     }
 }

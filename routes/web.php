@@ -29,6 +29,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/profile/delete', 'destroy')->name('profile.destroy');
         Route::post('/cover/update/{id}', 'coverPhoto')->name('cover.update');
         Route::post('/profile/update/{id}', 'profilePhoto')->name('profile.update');
+        Route::delete('/profile/remove/{id}', 'removeProfile')->name('profile.remove');
+        Route::delete('/cover/remove/{id}', 'removeCover')->name('cover.remove');
     });
 
     Route::controller(IndexController::class)->group(function () {

@@ -14,13 +14,16 @@ class UserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $coverUrl = $this->cover_path ? asset('storage/' . $this->cover_path) : null;
+        $profileUrl = $this->avatar_path ? asset('storage/' . $this->avatar_path) : null;
+
         return [
             "id" => $this->id,
             "name" => $this->name,
             "email" => $this->email,
             "username" => $this->username,
-            "cover_url" => asset('storage/' . $this->cover_path),
-            "avatar_url" => $this->avatar_path,
+            "cover_url" => $coverUrl,
+            "avatar_url" => $profileUrl,
             "description" => $this->description,
             "college" => $this->college,
             "work_place" => $this->work_place,
