@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Traits\UploadFileTrait;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -14,6 +16,8 @@ use Inertia\Response;
 
 class ProfileController extends Controller
 {
+    use UploadFileTrait;
+
     /**
      * Display the user's profile form.
      */
@@ -65,13 +69,27 @@ class ProfileController extends Controller
 
     public function profile($username): Response
     {
-        $user = User::where('username', $username)->first();
+        $user = new UserResource(User::where('username', $username)->first());
         if (!Auth::check()) {
             return Inertia::render('Pages/VisitProfile', compact('user'));
-
         }
-
         return Inertia::render('Pages/UserProfile', compact('user'));
 
+    }
+
+    public function coverPhoto(Request $request, $id): RedirectResponse
+    {
+        $user = User::findOrFail($id);
+        $imagePath = $this->uploadFile($request, 'cover_path', '', 'public/users');
+        $user->update(['cover_path' => $imagePath]);
+        return redirect()->back();
+    }
+
+    public function profilePhoto(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+        $imagePath = $this->uploadFile($request, 'cover_path', '', 'public/users');
+        $user->update(['cover_path' => $imagePath]);
+        return redirect()->back();
     }
 }
