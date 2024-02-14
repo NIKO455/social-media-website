@@ -60,8 +60,11 @@ function cancelCoverImage() {
 
 
 function submitCoverImage() {
-    coverForm.post(`/cover/update/${user.id}`);
-    coverImageSrc.value = null;
+    coverForm.post((`/cover/update/${user.id}`), {
+        onSuccess: () => {
+            coverImageSrc.value = null;
+        }
+    });
 }
 
 
