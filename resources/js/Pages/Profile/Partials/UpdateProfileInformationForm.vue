@@ -44,7 +44,7 @@ const form = useForm({
             </p>
         </header>
 
-        <form @submit.prevent="form.patch(route('profile.update'))" class="mt-6 space-y-6">
+        <form @submit.prevent="form.patch(route('profile.info.update'))" class="mt-6 space-y-6">
 
             <div class="grid sm:grid-cols-2 gap-6 grid-cols-1 justify-between w-full">
 
@@ -56,6 +56,7 @@ const form = useForm({
                         class="mt-1 block w-full"
                         v-model="form.name"
                         required
+                        placeholder="Enter your name"
                         autofocus
                         autocomplete="name"
                     />
@@ -71,6 +72,7 @@ const form = useForm({
                         class="mt-1 block w-full"
                         v-model="form.username"
                         required
+                        placeholder="Enter your username"
                         autofocus
                         autocomplete="username"
                     />
@@ -85,6 +87,7 @@ const form = useForm({
                         type="email"
                         class="mt-1 block w-full"
                         v-model="form.email"
+                        placeholder="Enter your email address"
                         required
                         autocomplete="username"
                     />

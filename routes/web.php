@@ -25,7 +25,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::controller(ProfileController::class)->group(function () {
         Route::get('/profile/edit', 'edit')->name('profile.edit');
-        Route::patch('/profile/update', 'update')->name('profile.update');
+        Route::patch('/profile/info/update', 'update')->name('profile.info.update');
         Route::get('/profile/delete', 'destroy')->name('profile.destroy');
         Route::post('/cover/update/{id}', 'coverPhoto')->name('cover.update');
         Route::post('/profile/update/{id}', 'profilePhoto')->name('profile.update');

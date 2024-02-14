@@ -42,7 +42,6 @@ function uploadCoverImage(event) {
 function uploadProfileImage(event) {
     profileImageFile = event.target.files[0];
     form.profile_path = profileImageFile;
-    console.log(profileImageFile)
     if (profileImageFile) {
         const reader = new FileReader();
         reader.onload = () => {
@@ -61,7 +60,8 @@ function cancelCoverImage() {
 
 
 function submitCoverImage() {
-    coverForm.post(`/cover/update/${user.id}`)
+    coverForm.post(`/cover/update/${user.id}`);
+    coverImageSrc.value = null;
 }
 
 
@@ -287,7 +287,7 @@ function submitCoverImage() {
 
     .profile-edit-button {
         position: absolute;
-        margin-top: -100px;
+        margin-top: -110px;
         right: -10px;
         width: auto;
     }

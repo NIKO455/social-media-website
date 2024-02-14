@@ -14,9 +14,14 @@ trait UploadFileTrait
         if ($request->hasFile($fileName)) {
             $file = $request->file($fileName);
 
+            $originalName = $file->getClientOriginalName();
+
+            $filenameWithoutExtension = pathinfo($originalName, PATHINFO_FILENAME);
+
+
             $extension = $file->getClientOriginalExtension();
 
-            $fileName = 'media_' . uniqid() . '_' . time() . '.' . $fileName . '.' . $extension;
+            $fileName = 'media_' . uniqid() . '_' . time() . '.' . $filenameWithoutExtension . '.' . $extension;
 
             $file->storeAs($path, $fileName, 'public');
 

@@ -83,13 +83,13 @@ class ProfileController extends Controller
         $oldPath = $user->cover_path;
         $imagePath = $this->uploadFile($request, 'cover_path', $oldPath, 'public/users');
         $user->update(['cover_path' => $imagePath]);
-        return redirect()->back();
+        return redirect()->back()->with('message', 'Cover Photo Updated');
     }
 
     public function profilePhoto(Request $request, $id): RedirectResponse
     {
         $user = User::findorFail($id);
-        $oldPath = $user->cover_path;
+        $oldPath = $user->profile_path;
         $imagePath = $this->uploadFile($request, 'profile_path', $oldPath, 'public/users');
         $user->update(['avatar_path' => $imagePath]);
         return redirect()->back();
