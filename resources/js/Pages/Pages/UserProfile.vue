@@ -101,7 +101,7 @@ function submitCoverImage() {
                                     </button>
 
                                     <PrimaryButton v-if="!coverImageSrc"
-                                                   class="absolute top-2 right-2 flex items-center gap-1 lg:hidden md:hidden">
+                                                   class="absolute top-[-10px] right-[-8px] flex items-center gap-1 lg:hidden md:hidden">
                                         <button>
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                                                  viewBox="0 0 24 24"
@@ -118,7 +118,7 @@ function submitCoverImage() {
 
                                     <template v-else>
                                         <button @click="cancelCoverImage"
-                                                class="cursor-pointer absolute top-2 right-24 lg:block md:block flex items-center px-2 py-2 bg-red-700 dark:bg-red-700 border border-transparent rounded-md font-semibold text-xs text-white hover:bg-red-800 dark:hover:bg-red-800 focus:bg-red-700 dark:focus:bg-red-600 active:bg-red-900 dark:active:bg-red-700 focus:outline-none focus:ring-0 focus:ring-offset-0 dark:focus:ring-offset-0 transition ease-in-out duration-150"
+                                                class="cursor-pointer absolute  top-[-10px] right-[40px] md:right-24 lg:right-24 lg:block md:block flex items-center px-2 py-2 bg-red-700 dark:bg-red-700 border border-transparent rounded-md font-semibold text-xs text-white hover:bg-red-800 dark:hover:bg-red-800 focus:bg-red-700 dark:focus:bg-red-600 active:bg-red-900 dark:active:bg-red-700 focus:outline-none focus:ring-0 focus:ring-offset-0 dark:focus:ring-offset-0 transition ease-in-out duration-150"
                                         >
                                             <div class="flex items-center gap-1 cursor-pointer">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -127,12 +127,14 @@ function submitCoverImage() {
                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                           d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                                                 </svg>
-                                                Cancel
+                                                <div class="hidden lg:block md:block">
+                                                    Cancel
+                                                </div>
                                             </div>
                                         </button>
                                         <button
                                             @click="submitCoverImage"
-                                            class="cursor-pointer absolute top-2 right-2 lg:block md:block flex items-center px-2 py-2 bg-green-700 dark:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white hover:bg-green-800 dark:hover:bg-green-800 focus:bg-green-700 dark:focus:bg-green-600 active:bg-green-900 dark:active:bg-green-700 focus:outline-none focus:ring-0 focus:ring-offset-0 dark:focus:ring-offset-0 transition ease-in-out duration-150"
+                                            class="cursor-pointer absolute top-[-10px] right-[-8px] lg:block md:block flex items-center px-2 py-2 bg-green-700 dark:bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white hover:bg-green-800 dark:hover:bg-green-800 focus:bg-green-700 dark:focus:bg-green-600 active:bg-green-900 dark:active:bg-green-700 focus:outline-none focus:ring-0 focus:ring-offset-0 dark:focus:ring-offset-0 transition ease-in-out duration-150"
                                         >
                                             <div class="flex items-center gap-1 cursor-pointer">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -141,7 +143,9 @@ function submitCoverImage() {
                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                           d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                                                 </svg>
-                                                Submit
+                                                <div class="hidden lg:block md:block">
+                                                    Submit
+                                                </div>
                                             </div>
                                         </button>
                                     </template>

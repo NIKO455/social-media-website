@@ -1,14 +1,11 @@
 <script setup>
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import {Tab, TabGroup, TabList, TabPanel, TabPanels} from "@headlessui/vue";
-import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TabListItem from "@/Pages/Page Components/TabListItem.vue";
 import AboutContainer from "@/Pages/Page Components/AboutContainer.vue";
 import FollowersContainer from "@/Pages/Page Components/FollowersContainer.vue";
 import VisitLayout from "@/Layouts/VisitLayout.vue";
 
-defineProps({user: Object})
-
+const {user} = defineProps({user: Object})
 
 </script>
 
@@ -21,19 +18,25 @@ defineProps({user: Object})
                     <div>
                         <div class="relative">
                             <!--  User Cover photo-->
-                            <img
-                                src="https://images.pexels.com/photos/268941/pexels-photo-268941.jpeg"
-                                alt="" class="w-full h-[230px] object-cover rounded-tl-lg rounded-tr-lg cover-image">
+                            <div class="relative">
+                                <img
+                                    :src="user.cover_url || 'https://generalassemb.ly/sites/default/files/styles/program_header_desktop_xxl_1x/public/2023-06/PT_AN_Header_0623.jpg?itok=83sR_pF_'"
+                                    alt=""
+                                    class="w-full h-[230px] object-cover rounded-tl-lg rounded-tr-lg cover-image">
+                            </div>
 
                             <div class="w-full px-2 sm:px-0">
                                 <TabGroup>
                                     <TabList
                                         class="relative nav-container flex gap-4 bg-[#1F2937] items-center ml-4 mr-4">
                                         <!-- profile image -->
-                                        <img
-                                            src="https://images.pexels.com/photos/1243046/pexels-photo-1243046.jpeg?cs=srgb&dl=pexels-mixu-1243046.jpg&fm=jpg"
-                                            alt=""
-                                            class="h-[150px] w-[150px] object-cover rounded-full mt-[-80px]">
+                                        <div class="relative w-[204px] profile-edit">
+                                            <img
+                                                :src="user.avatar_url || 'https://i.pinimg.com/736x/8b/16/7a/8b167af653c2399dd93b952a48740620.jpg'"
+                                                alt=""
+                                                class="h-[150px] w-[150px] object-cover rounded-full mt-[-80px]">
+
+                                        </div>
 
                                         <div
                                             class="flex w-full space-x-1 rounded-xl bg-blue-900/20 h-[40px] sm:w-full profiles-links">
@@ -93,25 +96,28 @@ defineProps({user: Object})
         display: block;
     }
 
+    .desktop-edit-btn {
+        display: none;
+    }
+
     .cover-image {
         height: 190px;
     }
 
-    .nav-container img {
-        margin-top: -150px;
+    .profile-edit {
+        margin-top: -100px;
         position: absolute;
         left: 50%;
         transform: translate(-50%, 0);
         height: 130px;
-        width: 130px;
-        border: 5px solid #13137f;
+        width: 155px;
     }
 
     .profile-edit-button {
         position: absolute;
         margin-top: -100px;
         right: -10px;
-        width: 130px;
+        width: auto;
     }
 
     .mobile-profile-container {
