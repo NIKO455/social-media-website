@@ -13,9 +13,8 @@ return new class extends Migration
     {
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
+            $table->longText('body')->nullable();
             $table->string('slug', 255);
-            $table->longText('description')->nullable();
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('group_id')->nullable()->constrained('groups');
             $table->foreignId('created_by')->constrained('users');

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\IndexController;
+use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -31,6 +32,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/profile/update/{id}', 'profilePhoto')->name('profile.update');
         Route::delete('/profile/remove/{id}', 'removeProfile')->name('profile.remove');
         Route::delete('/cover/remove/{id}', 'removeCover')->name('cover.remove');
+    });
+
+    Route::controller(PostController::class)->group(function () {
+        Route::post('/store/post', 'store')->name('store.post');
     });
 
     Route::controller(IndexController::class)->group(function () {
