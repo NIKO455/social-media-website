@@ -1,40 +1,14 @@
 <script setup>
+import {Menu, MenuButton, MenuItems, MenuItem} from '@headlessui/vue'
 import {Disclosure, DisclosureButton, DisclosurePanel} from "@headlessui/vue";
 
 defineProps({
-    avatar: String,
-    name: String,
-    date: String,
-    description: String,
-    post_group: String,
+    user: Object,
+    post: Object,
 })
 
-const post1 = {
-    attachments: [
-        {
-            'id': 1,
-            'name': 'test.png',
-            'url': 'https://cdn.pixabay.com/photo/2015/04/19/08/32/marguerite-729510_640.jpg',
-            'mime': 'image/png'
-        },
-        {
-            'id': 2,
-            'name': 'test.png',
-            'url': 'https://cdn.pixabay.com/photo/2015/04/19/08/32/marguerite-729510_640.jpg',
-            'mime': 'image/png'
-        },
-        {
-            'id': 3,
-            'name': 'MyDocument.docx',
-            'url': '#',
-            'mime': 'document/docx'
-        }
-    ]
-}
+function deletePost() {
 
-function isImage(attachment) {
-    const mime = attachment.mime.split('/');
-    return mime[0].toLowerCase() === 'image';
 }
 
 
@@ -42,30 +16,57 @@ function isImage(attachment) {
 
 <template>
     <div class="mt-10">
-        <div class="flex gap-3">
-            <img v-if="avatar" :src="avatar" alt="group-image"
-                 class="h-12 w-12 rounded-full object-cover cursor-pointer">
-            <div>
-                <div class="text-[15px] font-bold pb-1 flex items-center ">
-                    <p class="hover:underline cursor-pointer">
-                        {{ name }}
-                    </p>
-                    <template v-if="post_group">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                             stroke="currentColor" class="w-5 h-5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
-                        </svg>
-                        <span class="text-green-500 hover:underline cursor-pointer"> {{ post_group }}</span>
-                    </template>
+        <div class="flex align-item justify-between">
+            <div class="flex gap-3">
+                <img
+                    :src="user.avatar_url || 'https://i.pinimg.com/736x/8b/16/7a/8b167af653c2399dd93b952a48740620.jpg'"
+                    class="w-12 h-12 rounded-full object-cover" alt="user-image cursor-pointer"
+                >
+                <div>
+                    <div class="text-[15px] font-bold pb-1 flex items-center ">
+                        <p class="hover:underline cursor-pointer">
+                            {{ user.name }}
+                        </p>
+                        <template v-if="user">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                 stroke="currentColor" class="w-4 h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
+                            </svg>
+                            <span class="text-green-500 hover:underline cursor-pointer">hacker</span>
+                        </template>
+                    </div>
+                    <p class="mt-[-5px] text-sm text-gray-400">{{ post.created_at }}</p>
                 </div>
-                <p class="mt-[-5px] text-sm text-gray-400">{{ date }}</p>
+            </div>
+            <div class="relative">
+                <Menu>
+                    <MenuButton>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                             stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                  d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"/>
+                        </svg>
+                    </MenuButton>
+                    <MenuItems class="flex flex-col absolute bg-[#111827] right-2 w-40 rounded">
+                        <MenuItem v-slot="{ active }" class="p-3 text-sm hover:rounded hover:bg-gray-700">
+                            <a :class='{ "bg-blue-500": active }' href="/account-settings">
+                                Edit Post
+                            </a>
+                        </MenuItem>
+                        <MenuItem v-slot="{ active }" class="p-3 text-sm hover:rounded hover:bg-gray-700">
+                            <a :class='{ "bg-blue-500": active }' @click="deletePost">
+                                Delete Post
+                            </a>
+                        </MenuItem>
+                    </MenuItems>
+                </Menu>
             </div>
         </div>
-        <div class="pl-2 pr-2 mt-2">
+        <div class="pl-2 pr-2 mt-2" v-if="post.body">
             <Disclosure v-slot="{ open }">
-                <span v-if="!open" v-html="description.substring(0,150)" class="mr-2"/>
+                <span v-if="!open" v-html="post.body.substring(0,150)" class="mr-2"/>
                 <DisclosurePanel>
-                    <span v-html="description"/>
+                    <span v-html="post.body"/>
                 </DisclosurePanel>
                 <DisclosureButton>
                 <span class="text-[13px] text-blue-600 hover:underline">
@@ -74,27 +75,37 @@ function isImage(attachment) {
                 </DisclosureButton>
             </Disclosure>
         </div>
-        <div class="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-3">
-            <div v-if="post1.attachments" v-for="attachment in post1.attachments" :key="attachment.id"
-                 class="w-full h-[200px]">
-                <img v-if="isImage(attachment)" :src="attachment.url" alt="attachments image"
-                     class="h-full w-full object-cover mt-2 rounded">
-                <div v-else
-                     class="relative lg:mt-2 bg-blue-100 text-gray-500 mr-2 px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-gray-500 h-full w-full flex flex-col items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                         stroke="currentColor" class="w-12 h-12">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                              d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/>
-                    </svg>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                         stroke="currentColor" class="w-5 h-5 absolute top-3 right-3 cursor-pointer">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                              d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/>
-                    </svg>
-                    {{ attachment.name }}
+        <div v-if="post.attachments.length" class="mt-4">
+            <div v-if="post.attachments.length === 1">
+                <div>
+                    <div v-for="attachment in post.attachments" :key="attachment.id"
+                         class="w-full h-[300px] mt-2">
+                        <a :href="attachment.path" data-lightbox="mygallery" class="flex items-center justify-center">
+                            <img v-if="attachment.mime.includes('jpg') || attachment.mime.includes('jpeg') || attachment.mime.includes('png') || attachment.mime.includes('gif')" :src="attachment.path" alt="no-image" class="h-[300px] w-auto object-fill rounded">
+                            <video v-else>
+                                <source :src="attachment.path" type="video/mp4">
+                            </video>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div v-else>
+                <div class="grid grid-cols-2 gap-3">
+                    <div v-for="attachment in post.attachments" :key="attachment.id"
+                         class="w-full h-[300px] mt-2">
+                        <a :href="attachment.path" data-lightbox="mygallery" class="flex items-center justify-center">
+                            <img v-if="attachment.mime.includes('jpg') || attachment.mime.includes('jpeg') || attachment.mime.includes('png') || attachment.mime.includes('gif')" :src="attachment.path" alt="no-image" class="h-[300px] w-auto object-cover rounded">
+                            <video v-else>
+                                <source :src="attachment.path" type="video/mp4">
+                            </video>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
+
+
         <div class="grid grid-cols-3 mt-5 border-t-2 border-b-2 pt-1 pb-1 border-gray-300">
             <button class="flex items-center justify-center gap-2 w-full hover:bg-[#111827] p-1 rounded">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">

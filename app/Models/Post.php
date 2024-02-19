@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
@@ -19,6 +20,11 @@ class Post extends Model
         'created_by',
         'files',
     ];
+
+    public function attachments(): hasMany
+    {
+        return $this->hasMany(PostAttachment::class);
+    }
 
 
 }

@@ -14,6 +14,7 @@ use Illuminate\Support\Str;
 class PostController extends Controller
 {
     use UploadFileTrait;
+
     public function store(StorePostRequest $request)
     {
         $data = $request->validated();
@@ -30,21 +31,45 @@ class PostController extends Controller
 
             // Store attachments
             if ($request->hasFile('files')) {
-                foreach ($request->file('files') as $file) {
-                    $originalName = $file->getClientOriginalName();
-                    $filenameWithoutExtension = pathinfo($originalName, PATHINFO_FILENAME);
-                    $extension = $file->getClientOriginalExtension();
-                    $fileName = 'media_' . uniqid() . '_' . time() . '.' . $filenameWithoutExtension . '.' . $extension;
+                $counter = 0;
 
-                    PostAttachment::create([
-                        'post_id' => $post->id,
-                        'path' => $fileName,
-                        'name' => $originalName,
-                        'mime' => $extension,
-                        'created_by' => $data['user_id'],
-                    ]);
+                foreach ($request->file('files') as $file) {
+                    if ($counter < 2) {
+                        $originalName = $file->getClientOriginalName();
+                        $filenameWithoutExtension = pathinfo($originalName, PATHINFO_FILENAME);
+                        $extension = $file->getClientOriginalExtension();
+                        $fileName = 'media_' . uniqid() . '_' . time() . '.' . $filenameWithoutExtension . '.' . $extension;
+                        $file->storeAs('public/public/posts/', $fileName);
+                        PostAttachment::create([
+                            'post_id' => $post->id,
+                            'path' => $fileName,
+                            'name' => $originalName,
+                            'mime' => $extension,
+                            'created_by' => $data['user_id'],
+                        ]);
+                        $counter++;
+                    } else {
+                        break;
+                    }
                 }
             }
+
+
+            DB::commit();
+            return response()->json(['message' => 'Post created successfully'], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            dd($e->getMessage());
+        }
+    }
+
+    public function delete($id)
+    {
+        DB::beginTransaction();
+        try {
+            $post = Post::findOrFail($id);
+            dd($post);
+
 
             DB::commit();
             return response()->json(['message' => 'Post created successfully'], 200);

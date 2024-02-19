@@ -5,7 +5,7 @@ import GroupList from "@/Pages/Page Components/GroupList.vue";
 import FollowerList from "@/Pages/Page Components/FollowerList.vue";
 import MainContent from "@/Pages/Page Components/MainContent.vue";
 
-const {user} = defineProps({user: Object});
+const {user, posts} = defineProps({user: Object, posts: Object});
 
 </script>
 
@@ -23,7 +23,7 @@ const {user} = defineProps({user: Object});
 
                     <div
                         class="bg-[#1F2937] p-3 rounded-md lg:col-span-2 md:col-span-2 lg:h-[91%] md:h-[91%] md:overflow-auto lg:overflow-auto">
-                        <MainContent :user="user"/>
+                        <MainContent :user="user" :posts="posts"/>
                     </div>
 
                     <div

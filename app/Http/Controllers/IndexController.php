@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PostResource;
 use App\Http\Resources\UserResource;
 use App\Models\Post;
 use Illuminate\Foundation\Application;
@@ -14,7 +15,7 @@ class IndexController extends Controller
     public function index(): \Inertia\Response
     {
         $user = new UserResource(auth()->user());
-        $posts = Post::all();
+        $posts = PostResource::collection(Post::with('attachments')->get());
         if (auth()->check()) {
             return Inertia::render('Pages/Home',compact('user', 'posts'));
         }

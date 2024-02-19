@@ -7,8 +7,9 @@ import PostItem from "@/Components/PostItem.vue";
 import InfoButton from "@/Components/InfoButton.vue";
 import DangerButton from "@/Components/DangerButton.vue";
 
-const {user} = defineProps({
-    user: Object
+const {user, posts} = defineProps({
+    user: Object,
+    posts: Object
 })
 const showCreatePost = ref(false);
 
@@ -31,10 +32,12 @@ const form = useForm(
 );
 
 function postSelectFile(event) {
-    postFiles = Array.from(event.target.files);
-    form.files = postFiles;
+    const maxFiles = 2;
+    const files = Array.from(event.target.files).slice(0, maxFiles);
+    postFiles = [];
+    form.files = files;
 
-    postFiles.forEach((file) => {
+    files.forEach((file) => {
         if (file) {
             const reader = new FileReader();
             reader.onload = () => {
@@ -45,7 +48,8 @@ function postSelectFile(event) {
     });
 }
 
-function  removeImage(index) {
+
+function removeImage(index) {
     this.postFileSrc.splice(index, 1);
     this.postFiles.splice(index, 1);
     form.files = postFiles
@@ -108,22 +112,23 @@ function submitPost() {
 
                 <div v-if="postFileSrc.length" class="flex flex-wrap gap-2">
                     <template v-for="(src, index) in postFileSrc" :key="index">
-                        <div class="relative" >
+                        <div class="relative">
                             <img
                                 :src="src || user.cover_url || 'https://generalassemb.ly/sites/default/files/styles/program_header_desktop_xxl_1x/public/2023-06/PT_AN_Header_0623.jpg?itok=83sR_pF_'"
                                 alt=""
                                 class="w-[150px] h-[150px] object-cover rounded cover-image"
                             />
-                            <button @click="removeImage(index)" class="absolute top-2 right-2 bg-red-600 text-white p-[5px] rounded cursor-pointer">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                            <button @click="removeImage(index)"
+                                    class="absolute top-2 right-2 bg-red-600 text-white p-[5px] rounded cursor-pointer">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                     stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                                 </svg>
                             </button>
                         </div>
                     </template>
                 </div>
-
-
 
 
                 <textarea
@@ -136,7 +141,9 @@ function submitPost() {
                 <div class="flex justify-end">
                     <InfoButton class="ms-3 relative bg-red-600">
                         Choose File
-                        <input type="file" name="file" id="file" class="absolute opacity-0 w-[92px] hover:cursor-pointer" @change="postSelectFile" multiple>
+                        <input type="file" name="file" id="file"
+                               class="absolute opacity-0 w-[92px] hover:cursor-pointer" @change="postSelectFile"
+                               multiple>
                     </InfoButton>
                     <PrimaryButton class="ms-3" @click="submitPost">Post</PrimaryButton>
                 </div>
@@ -146,14 +153,8 @@ function submitPost() {
 
     <hr class="mt-6">
 
-    <div>
-        <PostItem name="Bhupendra Kathayat" post_group="Laravel Developer"
-                  avatar="https://cdn.pixabay.com/photo/2015/04/19/08/32/marguerite-729510_640.jpg" date="1 hour ago"
-                  description="a statement that tells you how something or someone looks, sounds, etc. : words that describe something or someone. [count] Reporters called the scene “a disaster area,” and I think that was an accurate description. I applied for the position after reading the job description."/>
-
-        <PostItem name="Bhupendra Kathayat"
-                  avatar="https://cdn.pixabay.com/photo/2015/04/19/08/32/marguerite-729510_640.jpg" date="1 hour ago"
-                  description="a statement that tells you how something or someone looks, sounds, etc. : words that describe something or someone. [count] Reporters called the scene “a disaster area,” and I think that was an accurate description. I applied for the position after reading the job description."/>
+    <div v-for="post in posts" :key="post.id">
+        <PostItem :post="post" :user="user"/>
     </div>
 
 </template>
