@@ -36,7 +36,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::controller(PostController::class)->group(function () {
         Route::post('/store/post', 'store')->name('store.post');
-        Route::delete('/delete/post', 'delete')->name('delete.post');
+        Route::post('/update/post/{slug}', 'update')->name('update.post');
+        Route::delete('/delete/post/{slug}', 'delete')->name('delete.post');
     });
 
     Route::controller(IndexController::class)->group(function () {

@@ -11,6 +11,7 @@ const {user, posts} = defineProps({
     user: Object,
     posts: Object
 })
+
 const showCreatePost = ref(false);
 
 const createPost = () => {

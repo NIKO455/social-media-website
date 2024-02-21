@@ -1,20 +1,160 @@
 <script setup>
 import {Menu, MenuButton, MenuItems, MenuItem} from '@headlessui/vue'
 import {Disclosure, DisclosureButton, DisclosurePanel} from "@headlessui/vue";
+import {Link, useForm} from "@inertiajs/vue3";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
+import InfoButton from "@/Components/InfoButton.vue";
+import Modal from "@/Components/Modal.vue";
+import {ref} from "vue";
 
-defineProps({
+const form = useForm({})
+
+const {user, post} = defineProps({
     user: Object,
     post: Object,
 })
 
-function deletePost() {
 
+const showCreatePost = ref(false);
+
+const createPost = () => {
+    showCreatePost.value = true;
+}
+
+const closeModal = () => {
+    showCreatePost.value = false;
+}
+
+
+let postFiles = [];
+const postFileSrc = ref(post.attachments ?? []);
+const updateForm = useForm({
+    body: post.body,
+    files: null,
+});
+
+function postSelectFile(event) {
+    let maxFiles;
+    if (postFileSrc.value.length === 2) {
+        maxFiles = 0;
+    }else if(postFileSrc.value.length === 1 ){
+        maxFiles = 1;
+    }else{
+        maxFiles = 2;
+    }
+    const files = Array.from(event.target.files).slice(0, maxFiles);
+    postFiles = files;
+    updateForm.files = files;
+    files.forEach((file) => {
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                postFileSrc.value.push(reader.result);
+                console.log(postFileSrc.value)
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+}
+
+function removeImage(index) {
+    postFileSrc.value.splice(index, 1);
+    postFiles.splice(index, 1);
+    updateForm.files = postFiles;
+}
+
+function submitPost(slug) {
+    updateForm.post(`update/post/${slug}`, {
+        onSuccess: () => {
+            closeModal();
+            updateForm.body = '';
+            postFiles = [];
+            postFileSrc.value = [];
+        },
+    });
+}
+
+
+function deletePost(slug) {
+    form.delete((`/delete/post/${slug}`), {
+        onSuccess: () => {
+            console.log("done")
+        },
+    });
 }
 
 
 </script>
 
 <template>
+
+
+    <Modal :show="showCreatePost" @close="closeModal">
+        <div class="bg-gray-700 p-5">
+            <div class="relative">
+                <h1 class="pb-1 text-xl text-center font-bold dark:text-white">Edit Post</h1>
+                <button
+                    class="ms-3 absolute top-[-10px] right-0 bg-gray-600 dark:text-white p-2 rounded-full"
+                    @click="closeModal"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                         stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <hr class="my-2">
+            <div class="flex items-center mb-5">
+                <img
+                    :src="user.avatar_url || 'https://i.pinimg.com/736x/8b/16/7a/8b167af653c2399dd93b952a48740620.jpg'"
+                    alt=""
+                    class="h-12 w-12 object-cover rounded-full"
+                >
+                <Link :href="route('profile',$page.props.auth.user.username)">
+                    <p class="ml-3 font-bold dark:text-white">{{ user.name }}</p>
+                </Link>
+            </div>
+
+            <div v-if="postFileSrc.length" class="flex flex-wrap gap-2">
+                <template v-for="(src, index) in postFileSrc" :key="index">
+                    <div class="relative">
+                        <img
+                            :src="src.path || src || user.cover_url || 'https://generalassemb.ly/sites/default/files/styles/program_header_desktop_xxl_1x/public/2023-06/PT_AN_Header_0623.jpg?itok=83sR_pF_'"
+                            alt="image"
+                            class="w-[150px] h-[150px] object-cover rounded cover-image"
+                        />
+                        <button @click="removeImage(index)"
+                                class="absolute top-2 right-2 bg-red-600 text-white p-[5px] rounded cursor-pointer">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                 stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                      d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </template>
+            </div>
+
+
+            <textarea
+                rows="10"
+                class="w-full border-none dark:border-gray-700 dark:bg-gray-700 dark:text-white focus:border-none dark:focus:border-none focus:ring-0 dark:focus:ring-0 rounded-md shadow-sm"
+                ref="input"
+                placeholder="What's in your mind, Bhupendra?"
+                v-model="updateForm.body"
+            ></textarea>
+            <div class="flex justify-end">
+                <InfoButton class="ms-3 relative bg-red-600">
+                    Choose File
+                    <input type="file" name="file" id="file"
+                           class="absolute opacity-0 w-[92px] hover:cursor-pointer" @change="postSelectFile"
+                           multiple>
+                </InfoButton>
+                <PrimaryButton class="ms-3" @click="submitPost(post.slug)">Update</PrimaryButton>
+            </div>
+        </div>
+    </Modal>
+
     <div class="mt-10">
         <div class="flex align-item justify-between">
             <div class="flex gap-3">
@@ -49,12 +189,13 @@ function deletePost() {
                     </MenuButton>
                     <MenuItems class="flex flex-col absolute bg-[#111827] right-2 w-40 rounded">
                         <MenuItem v-slot="{ active }" class="p-3 text-sm hover:rounded hover:bg-gray-700">
-                            <a :class='{ "bg-blue-500": active }' href="/account-settings">
+                            <a :class='{ "bg-blue-500": active }' @click="createPost">
                                 Edit Post
                             </a>
                         </MenuItem>
-                        <MenuItem v-slot="{ active }" class="p-3 text-sm hover:rounded hover:bg-gray-700">
-                            <a :class='{ "bg-blue-500": active }' @click="deletePost">
+                        <MenuItem v-slot="{ active }"
+                                  class="p-3 text-sm hover:rounded hover:bg-gray-700 cursor-pointer">
+                            <a :class='{ "bg-blue-500": active }' @click="deletePost(post.slug)">
                                 Delete Post
                             </a>
                         </MenuItem>
@@ -81,7 +222,9 @@ function deletePost() {
                     <div v-for="attachment in post.attachments" :key="attachment.id"
                          class="w-full h-[300px] mt-2">
                         <a :href="attachment.path" data-lightbox="mygallery" class="flex items-center justify-center">
-                            <img v-if="attachment.mime.includes('jpg') || attachment.mime.includes('jpeg') || attachment.mime.includes('png') || attachment.mime.includes('gif')" :src="attachment.path" alt="no-image" class="h-[300px] w-auto object-fill rounded">
+                            <img
+                                v-if="attachment.mime.includes('jpg') || attachment.mime.includes('jpeg') || attachment.mime.includes('png') || attachment.mime.includes('gif')"
+                                :src="attachment.path" alt="no-image" class="h-[300px] w-auto object-fill rounded">
                             <video v-else>
                                 <source :src="attachment.path" type="video/mp4">
                             </video>
@@ -95,7 +238,9 @@ function deletePost() {
                     <div v-for="attachment in post.attachments" :key="attachment.id"
                          class="w-full h-[300px] mt-2">
                         <a :href="attachment.path" data-lightbox="mygallery" class="flex items-center justify-center">
-                            <img v-if="attachment.mime.includes('jpg') || attachment.mime.includes('jpeg') || attachment.mime.includes('png') || attachment.mime.includes('gif')" :src="attachment.path" alt="no-image" class="h-[300px] w-auto object-cover rounded">
+                            <img
+                                v-if="attachment.mime.includes('jpg') || attachment.mime.includes('jpeg') || attachment.mime.includes('png') || attachment.mime.includes('gif')"
+                                :src="attachment.path" alt="no-image" class="h-[300px] w-auto object-cover rounded">
                             <video v-else>
                                 <source :src="attachment.path" type="video/mp4">
                             </video>

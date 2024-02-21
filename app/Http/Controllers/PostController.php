@@ -63,16 +63,22 @@ class PostController extends Controller
         }
     }
 
-    public function delete($id)
+    public function update(Request $request, $slug)
+    {
+        dd($request->all());
+        $post = Post::where('slug', $slug)->first();
+        dd($post);
+        return response()->json(['post' => $post], 200);
+    }
+
+    public function delete($slug)
     {
         DB::beginTransaction();
         try {
-            $post = Post::findOrFail($id);
-            dd($post);
-
-
+            $post = Post::where('slug', $slug)->first();
+            $post->delete();
             DB::commit();
-            return response()->json(['message' => 'Post created successfully'], 200);
+            return response()->json(['message' => 'Post deleted successfully'], 200);
         } catch (\Exception $e) {
             DB::rollBack();
             dd($e->getMessage());
