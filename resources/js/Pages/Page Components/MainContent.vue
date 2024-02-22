@@ -54,7 +54,6 @@ function removeImage(index) {
     this.postFileSrc.splice(index, 1);
     this.postFiles.splice(index, 1);
     form.files = postFiles
-    console.log(form.files)
 }
 
 function submitPost() {
@@ -133,7 +132,7 @@ function submitPost() {
 
 
                 <textarea
-                    rows="10"
+                    rows="auto"
                     class="w-full border-none dark:border-gray-700 dark:bg-gray-700 dark:text-white focus:border-none dark:focus:border-none focus:ring-0 dark:focus:ring-0 rounded-md shadow-sm"
                     ref="input"
                     placeholder="What's in your mind, Bhupendra?"
@@ -155,14 +154,16 @@ function submitPost() {
     <hr class="mt-6">
 
     <div v-for="post in posts" :key="post.id">
-        <PostItem :post="post" :user="user"/>
+        <div v-if="post.body !== null || post.attachments.length > 0">
+            <PostItem :post="post" :user="user"/>
+        </div>
     </div>
 
 </template>
 
 <style scoped>
 textarea {
-    height: 300px;
+    min-height: 100px;
     resize: none;
 }
 

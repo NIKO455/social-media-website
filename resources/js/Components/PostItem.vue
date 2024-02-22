@@ -27,30 +27,25 @@ const closeModal = () => {
 
 
 let postFiles = [];
-const postFileSrc = ref(post.attachments ?? []);
+const postOldFileSrc = ref(post.attachments ?? []);
+const postFileSrc = ref('');
+
 const updateForm = useForm({
     body: post.body,
     files: null,
 });
 
 function postSelectFile(event) {
-    let maxFiles;
-    if (postFileSrc.value.length === 2) {
-        maxFiles = 0;
-    }else if(postFileSrc.value.length === 1 ){
-        maxFiles = 1;
-    }else{
-        maxFiles = 2;
-    }
+    const maxFiles = 2;
     const files = Array.from(event.target.files).slice(0, maxFiles);
     postFiles = files;
     updateForm.files = files;
+
     files.forEach((file) => {
         if (file) {
             const reader = new FileReader();
             reader.onload = () => {
-                postFileSrc.value.push(reader.result);
-                console.log(postFileSrc.value)
+                postFileSrc.value = [...postFileSrc.value, reader.result];
             };
             reader.readAsDataURL(file);
         }
@@ -58,7 +53,19 @@ function postSelectFile(event) {
 }
 
 function removeImage(index) {
-    postFileSrc.value.splice(index, 1);
+    this.postFileSrc.splice(index, 1);
+    this.postFiles.splice(index, 1);
+    updateForm.files = postFiles
+}
+
+
+function removeOldImage(index, src) {
+    form.delete((`/delete/assets/${src.id}`), {
+        onSuccess: () => {
+            console.log("done")
+        },
+    });
+    postOldFileSrc.value.splice(index, 1);
     postFiles.splice(index, 1);
     updateForm.files = postFiles;
 }
@@ -69,7 +76,7 @@ function submitPost(slug) {
             closeModal();
             updateForm.body = '';
             postFiles = [];
-            postFileSrc.value = [];
+            postOldFileSrc.value = [];
         },
     });
 }
@@ -115,29 +122,57 @@ function deletePost(slug) {
                 </Link>
             </div>
 
-            <div v-if="postFileSrc.length" class="flex flex-wrap gap-2">
-                <template v-for="(src, index) in postFileSrc" :key="index">
-                    <div class="relative">
-                        <img
-                            :src="src.path || src || user.cover_url || 'https://generalassemb.ly/sites/default/files/styles/program_header_desktop_xxl_1x/public/2023-06/PT_AN_Header_0623.jpg?itok=83sR_pF_'"
-                            alt="image"
-                            class="w-[150px] h-[150px] object-cover rounded cover-image"
-                        />
-                        <button @click="removeImage(index)"
-                                class="absolute top-2 right-2 bg-red-600 text-white p-[5px] rounded cursor-pointer">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                 stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                      d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
-                            </svg>
-                        </button>
+            <div class="flex align-center gap-2">
+                <div v-if="postOldFileSrc.length">
+                    <h1 class="text-sm dark:text-green-600 mb-1">Old Files</h1>
+                    <div v-if="postOldFileSrc.length" class="flex flex-wrap gap-2">
+                        <template v-for="(src, index) in postOldFileSrc" :key="index">
+                            <div class="relative">
+                                <img
+                                    :src="src.path || src || user.cover_url || 'https://generalassemb.ly/sites/default/files/styles/program_header_desktop_xxl_1x/public/2023-06/PT_AN_Header_0623.jpg?itok=83sR_pF_'"
+                                    alt="image"
+                                    class="w-[150px] h-[150px] object-cover rounded cover-image"
+                                />
+                                <button @click="removeOldImage(index, src)"
+                                        class="absolute top-2 right-2 bg-red-600 text-white p-[5px] rounded cursor-pointer">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                         stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                              d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </template>
                     </div>
-                </template>
+                </div>
+
+                <div v-if="postFileSrc.length">
+                    <h1 class="text-sm dark:text-white mb-1">New Files</h1>
+                    <div v-if="postFileSrc.length" class="flex flex-wrap gap-2">
+                        <template v-for="(src, index) in postFileSrc" :key="index">
+                            <div class="relative">
+                                <img
+                                    :src="src || user.cover_url || 'https://generalassemb.ly/sites/default/files/styles/program_header_desktop_xxl_1x/public/2023-06/PT_AN_Header_0623.jpg?itok=83sR_pF_'"
+                                    alt=""
+                                    class="w-[150px] h-[150px] object-cover rounded cover-image"
+                                />
+                                <button @click="removeImage(index)"
+                                        class="absolute top-2 right-2 bg-red-600 text-white p-[5px] rounded cursor-pointer">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                         stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                              d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
             </div>
 
 
             <textarea
-                rows="10"
                 class="w-full border-none dark:border-gray-700 dark:bg-gray-700 dark:text-white focus:border-none dark:focus:border-none focus:ring-0 dark:focus:ring-0 rounded-md shadow-sm"
                 ref="input"
                 placeholder="What's in your mind, Bhupendra?"
@@ -155,6 +190,7 @@ function deletePost(slug) {
         </div>
     </Modal>
 
+
     <div class="mt-10">
         <div class="flex align-item justify-between">
             <div class="flex gap-3">
@@ -167,7 +203,7 @@ function deletePost(slug) {
                         <p class="hover:underline cursor-pointer">
                             {{ user.name }}
                         </p>
-                        <template v-if="user">
+                        <template v-if="post.group_id">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                  stroke="currentColor" class="w-4 h-4">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
@@ -205,12 +241,12 @@ function deletePost(slug) {
         </div>
         <div class="pl-2 pr-2 mt-2" v-if="post.body">
             <Disclosure v-slot="{ open }">
-                <span v-if="!open" v-html="post.body.substring(0,150)" class="mr-2"/>
+                <span v-if="!open" v-html="post.body.substring(0,70)" class="mr-2"/>
                 <DisclosurePanel>
                     <span v-html="post.body"/>
                 </DisclosurePanel>
                 <DisclosureButton>
-                <span class="text-[13px] text-blue-600 hover:underline">
+                <span class="text-[13px] text-blue-600 hover:underline" v-if="post.body.length > 70">
                     {{ open ? 'Read Less' : 'Read More' }}
                 </span>
                 </DisclosureButton>
@@ -281,5 +317,10 @@ function deletePost(slug) {
 </template>
 
 <style scoped>
+
+textarea {
+    min-height: 100px;
+    resize: none;
+}
 
 </style>

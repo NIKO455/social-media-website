@@ -32,7 +32,6 @@ class PostController extends Controller
             // Store attachments
             if ($request->hasFile('files')) {
                 $counter = 0;
-
                 foreach ($request->file('files') as $file) {
                     if ($counter < 2) {
                         $originalName = $file->getClientOriginalName();
@@ -65,23 +64,61 @@ class PostController extends Controller
 
     public function update(Request $request, $slug)
     {
-        dd($request->all());
-        $post = Post::where('slug', $slug)->first();
-        dd($post);
-        return response()->json(['post' => $post], 200);
+        $post = Post::where('slug', $slug)->with('attachments')->first();
+        $existingAttachments = count($post->attachments);
+
+        if ($request->hasFile('files')) {
+            $allowedUploads = 2 - $existingAttachments;
+            $counter = 0;
+            foreach ($request->file('files') as $file) {
+                if ($counter < $allowedUploads) {
+                    $originalName = $file->getClientOriginalName();
+                    $filenameWithoutExtension = pathinfo($originalName, PATHINFO_FILENAME);
+                    $extension = $file->getClientOriginalExtension();
+                    $fileName = 'media_' . uniqid() . '_' . time() . '.' . $filenameWithoutExtension . '.' . $extension;
+                    $file->storeAs('public/public/posts/', $fileName);
+                    PostAttachment::create([
+                        'post_id' => $post->id,
+                        'path' => $fileName,
+                        'name' => $originalName,
+                        'mime' => $extension,
+                        'created_by' => $post['user_id'],
+                    ]);
+                    $counter++;
+                } else {
+                    break;
+                }
+            }
+        }
+        return redirect()->back();
     }
 
     public function delete($slug)
     {
         DB::beginTransaction();
         try {
-            $post = Post::where('slug', $slug)->first();
+            $post = Post::where('slug', $slug)->with('attachments')->first();
             $post->delete();
             DB::commit();
             return response()->json(['message' => 'Post deleted successfully'], 200);
         } catch (\Exception $e) {
             DB::rollBack();
             dd($e->getMessage());
+        }
+    }
+
+    public function deleteAssets($id)
+    {
+        DB::beginTransaction();
+        try {
+            $post = PostAttachment::findOrFail($id);
+            $this->deleteFile($post->path);
+            $post->delete();
+            DB::commit();
+            return redirect()->back();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back();
         }
     }
 
