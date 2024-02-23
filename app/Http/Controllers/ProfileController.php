@@ -69,7 +69,8 @@ class ProfileController extends Controller
 
     public function profile($username): Response
     {
-        $user = new UserResource(User::where('username', $username)->first());
+
+        $user = new UserResource(User::where('username', $username)->with('posts.attachments')->first());
         if (!Auth::check()) {
             return Inertia::render('Pages/VisitProfile', compact('user'));
         }

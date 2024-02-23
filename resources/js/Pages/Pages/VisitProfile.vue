@@ -4,6 +4,7 @@ import TabListItem from "@/Pages/Page Components/TabListItem.vue";
 import AboutContainer from "@/Pages/Page Components/AboutContainer.vue";
 import FollowersContainer from "@/Pages/Page Components/FollowersContainer.vue";
 import VisitLayout from "@/Layouts/VisitLayout.vue";
+import PostCardItem from "@/Components/PostCardItem.vue";
 
 const {user} = defineProps({user: Object})
 
@@ -62,8 +63,17 @@ const {user} = defineProps({user: Object})
                                                 <AboutContainer :user="user"/>
                                             </TabPanel>
                                             <TabPanel
-                                                :class="['rounded-xl bg-[#111827] dark:text-white p-3','ring-white/60 ring-offset-0 focus:outline-none focus:ring-0',]">
-                                                This is post section
+                                                :class="['rounded-xl bg-[#111827]    dark:text-white p-3','ring-white/60 ring-offset-0 focus:outline-none focus:ring-0',]">
+
+                                                <div
+                                                    class="bg-[#1F2937] p-3  w-[40vw] m-auto rounded">
+                                                    <div v-for="post in user.posts" :key="post.id">
+                                                        <div v-if="post.body !== null || post.attachments.length > 0">
+                                                            <PostCardItem :post="post" :user="user"/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
                                             </TabPanel>
                                             <TabPanel
                                                 :class="['rounded-xl bg-[#111827] dark:text-white p-3','ring-white/60 ring-offset-0 focus:outline-none focus:ring-0',]">

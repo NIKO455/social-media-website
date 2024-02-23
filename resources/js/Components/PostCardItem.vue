@@ -97,7 +97,7 @@ function deletePost(slug) {
 
 
     <Modal :show="showCreatePost" @close="closeModal">
-        <div class="bg-gray-700 p-5">
+        <div class="bg-gray-700  p-5">
             <div class="relative">
                 <h1 class="pb-1 text-xl text-center font-bold dark:text-white">Edit Post</h1>
                 <button
@@ -191,7 +191,7 @@ function deletePost(slug) {
     </Modal>
 
 
-    <div class="mt-10">
+    <div class="mt-3">
         <div class="flex align-item justify-between">
             <div class="flex gap-3">
                 <img

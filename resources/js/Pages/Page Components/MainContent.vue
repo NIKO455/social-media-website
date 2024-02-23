@@ -110,7 +110,7 @@ function submitPost() {
                     </Link>
                 </div>
 
-                <div v-if="postFileSrc.length" class="flex flex-wrap gap-2">
+                <div v-if="postFileSrc.length" class="flex flex-wrap gap-2 ml-3 mb-3">
                     <template v-for="(src, index) in postFileSrc" :key="index">
                         <div class="relative">
                             <img
@@ -165,6 +165,11 @@ function submitPost() {
 textarea {
     min-height: 100px;
     resize: none;
+    scroll-behavior: hidden;
+}
+
+textarea::-webkit-scrollbar {
+    display: none;
 }
 
 textarea:disabled {
