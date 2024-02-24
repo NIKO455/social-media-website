@@ -201,7 +201,9 @@ function deletePost(slug) {
                 <div>
                     <div class="text-[15px] font-bold pb-1 flex items-center ">
                         <p class="hover:underline cursor-pointer">
-                            {{ user.name }}
+                            <Link :href="route('profile',$page.props.auth.user.username)">
+                                {{ user.name }}
+                            </Link>
                         </p>
                         <template v-if="post.group_id">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"

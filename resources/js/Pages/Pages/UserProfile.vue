@@ -241,13 +241,15 @@ function submitCoverImage() {
                                             <TabPanel
                                                 :class="['rounded-xl bg-[#111827] dark:text-white p-3','ring-white/60 ring-offset-0 focus:outline-none focus:ring-0',]">
 
-                                                <div
-                                                    class="bg-[#1F2937] p-3 w-[40vw] m-auto rounded">
+                                                <div v-if="user.posts.length > 0" class="bg-[#1F2937] p-3 w-[40vw] m-auto rounded">
                                                     <div v-for="post in user.posts" :key="post.id">
                                                         <div v-if="post.body !== null || post.attachments.length > 0">
                                                             <PostCardItem :post="post" :user="user"/>
                                                         </div>
                                                     </div>
+                                                </div>
+                                                <div v-else>
+                                                    <p class="text-center">No posts found</p>
                                                 </div>
 
                                             </TabPanel>

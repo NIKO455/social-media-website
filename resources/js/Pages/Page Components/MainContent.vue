@@ -61,6 +61,8 @@ function submitPost() {
         onSuccess: () => {
             closeModal();
             form.body = '';
+            postFileSrc = '';
+            postFiles = [];
         },
     });
 }

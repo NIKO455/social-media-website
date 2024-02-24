@@ -55,7 +55,10 @@ class PostController extends Controller
 
 
             DB::commit();
-            return response()->json(['message' => 'Post created successfully'], 200);
+
+            return redirect()->back();
+
+//            return response()->json(['message' => 'Post created successfully'], 200);
         } catch (\Exception $e) {
             DB::rollBack();
             dd($e->getMessage());
@@ -90,6 +93,11 @@ class PostController extends Controller
                 }
             }
         }
+
+        $post->update([
+            'body' => $request->body
+        ]);
+
         return redirect()->back();
     }
 
@@ -98,9 +106,15 @@ class PostController extends Controller
         DB::beginTransaction();
         try {
             $post = Post::where('slug', $slug)->with('attachments')->first();
+            if ($post->attachments) {
+                foreach ($post->attachments as $attachment) {
+                    $res = $this->deleteFile('public/posts/'. $attachment->path);
+                }
+            }
             $post->delete();
             DB::commit();
-            return response()->json(['message' => 'Post deleted successfully'], 200);
+            return redirect()->back();
+//            return response()->json(['message' => 'Post deleted successfully'], 200);
         } catch (\Exception $e) {
             DB::rollBack();
             dd($e->getMessage());

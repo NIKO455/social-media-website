@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Http\Resources\UserResource;
+use App\Models\Post;
 use App\Models\User;
 use App\Traits\UploadFileTrait;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -80,27 +82,51 @@ class ProfileController extends Controller
 
     public function coverPhoto(Request $request, $id): RedirectResponse
     {
-        $user = User::findorFail($id);
-        $oldPath = $user->cover_path;
-        $imagePath = $this->uploadFile($request, 'cover_path', $oldPath, 'public/users');
-        $user->update(['cover_path' => $imagePath]);
-        return redirect()->back()->with('message', 'Cover Photo Updated');
+        DB::beginTransaction();
+        try {
+            $user = User::findorFail($id);
+            $oldPath = $user->cover_path;
+            $this->deleteFile($oldPath);
+            $imagePath = $this->uploadFile($request, 'cover_path', $oldPath, 'public/users');
+            $user->update(['cover_path' => $imagePath]);
+            DB::commit();
+            return redirect()->back()->with('message', 'Cover Photo Updated');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            dd($e->getMessage());
+        }
     }
 
     public function profilePhoto(Request $request, $id): RedirectResponse
     {
-        $user = User::findorFail($id);
-        $oldPath = $user->profile_path;
-        $imagePath = $this->uploadFile($request, 'profile_path', $oldPath, 'public/users');
-        $user->update(['avatar_path' => $imagePath]);
-        return redirect()->back();
+        DB::beginTransaction();
+        try {
+            $user = User::findorFail($id);
+            $oldPath = $user->avatar_path;
+            $this->deleteFile($oldPath);
+            $imagePath = $this->uploadFile($request, 'profile_path', $oldPath, 'public/users');
+            $user->update(['avatar_path' => $imagePath]);
+            DB::commit();
+            return redirect()->back();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            dd($e->getMessage());
+        }
     }
 
     public function removeProfile($id): RedirectResponse
     {
-        $user = User::findorFail($id);
-        $this->deleteFile($user->avatar_path);
-        $user->update(['avatar_path' => null]);
-        return redirect()->back();
+        DB::beginTransaction();
+        try {
+            $user = User::findorFail($id);
+            $this->deleteFile($user->avatar_path);
+            $user->update(['avatar_path' => null]);
+            DB::commit();
+            return redirect()->back();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            dd($e->getMessage());
+        }
+
     }
 }
