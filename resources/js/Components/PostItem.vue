@@ -91,6 +91,11 @@ function deletePost(slug) {
 }
 
 
+const isImage = (attachment) => {
+    return attachment.mime.includes('jpg') || attachment.mime.includes('jpeg') || attachment.mime.includes('png') || attachment.mime.includes('gif');
+};
+
+
 </script>
 
 <template>
@@ -254,35 +259,33 @@ function deletePost(slug) {
                 </DisclosureButton>
             </Disclosure>
         </div>
-        <div v-if="post.attachments.length" class="mt-4">
-            <div v-if="post.attachments.length === 1">
-                <div>
-                    <div v-for="attachment in post.attachments" :key="attachment.id"
-                         class="w-full h-[300px] mt-2">
-                        <a :href="attachment.path" data-lightbox="mygallery" class="flex items-center justify-center">
-                            <img
-                                v-if="attachment.mime.includes('jpg') || attachment.mime.includes('jpeg') || attachment.mime.includes('png') || attachment.mime.includes('gif')"
-                                :src="attachment.path" alt="no-image" class="h-[300px] w-auto object-fill rounded">
-                            <video v-else>
-                                <source :src="attachment.path" type="video/mp4">
-                            </video>
-                        </a>
+
+        <div>
+            <div v-if="post.attachments.length" class="mt-4">
+                <div v-if="post.attachments.length === 1">
+                    <div>
+                        <div v-for="attachment in post.attachments" :key="attachment.id"
+                             class="w-full h-[300px] mt-2">
+                            <a :href="attachment.path" :data-lightbox="'post-' + post.id" class="flex items-center justify-center">
+                                <img v-if="isImage(attachment)" :src="attachment.path" alt="no-image" class="h-[300px] w-auto object-fill rounded">
+                                <video v-else>
+                                    <source :src="attachment.path" type="video/mp4">
+                                </video>
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <div v-else>
-                <div class="grid grid-cols-2 gap-3">
-                    <div v-for="attachment in post.attachments" :key="attachment.id"
-                         class="w-full h-[300px] mt-2">
-                        <a :href="attachment.path" data-lightbox="mygallery" class="flex items-center justify-center">
-                            <img
-                                v-if="attachment.mime.includes('jpg') || attachment.mime.includes('jpeg') || attachment.mime.includes('png') || attachment.mime.includes('gif')"
-                                :src="attachment.path" alt="no-image" class="h-[300px] w-auto object-cover rounded">
-                            <video v-else>
-                                <source :src="attachment.path" type="video/mp4">
-                            </video>
-                        </a>
+                <div v-else>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div v-for="attachment in post.attachments" :key="attachment.id"
+                             class="w-full h-[300px] mt-2">
+                            <a :href="attachment.path" :data-lightbox="'post-' + post.id" class="flex items-center justify-center">
+                                <img v-if="isImage(attachment)" :src="attachment.path" alt="no-image" class="h-[300px] w-auto object-cover rounded">
+                                <video v-else>
+                                    <source :src="attachment.path" type="video/mp4">
+                                </video>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -318,8 +321,18 @@ function deletePost(slug) {
     </div>
 </template>
 
-<style scoped>
+<style>
 
+.lb-data .lb-close {
+    position: absolute !important;
+    top: -34px !important;
+}
+
+.lightbox .lb-image {
+    width: auto !important;
+    object-fit: cover;
+    height: 500px !important;
+}
 textarea {
     min-height: 100px;
     resize: none;

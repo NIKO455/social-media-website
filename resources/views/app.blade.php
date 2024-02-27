@@ -23,4 +23,11 @@
 <body class="font-sans antialiased h-full bg-[#111827] lg:overflow-hidden md:overflow-hidden">
 @inertia
 </body>
+
+<script>
+    lightbox.option({
+        'showImageNumberLabel': false
+    })
+</script>
+
 </html>
