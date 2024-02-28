@@ -39,6 +39,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/delete/assets/{id}', 'deleteAssets')->name('delete.assets');
         Route::post('/update/post/{slug}', 'update')->name('update.post');
         Route::delete('/delete/post/{slug}', 'delete')->name('delete.post');
+        Route::put('/like/post/{slug}', 'likePost')->name('like.post');
     });
 
     Route::controller(IndexController::class)->group(function () {

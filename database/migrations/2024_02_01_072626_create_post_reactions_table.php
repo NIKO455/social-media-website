@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('post_reactions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('post_id')->constrained('posts');
+            $table->foreignId('post_id')->constrained('posts')->cascadeOnDelete();
             $table->string('type'); //like, dislike, sad, love, laugh, angry
             $table->foreignId('user_id')->constrained('users');
-            $table->timestamp('created_at')->nullable();
+            $table->timestamps();
         });
     }
 

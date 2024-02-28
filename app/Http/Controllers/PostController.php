@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePostRequest;
 use App\Models\Post;
 use App\Models\PostAttachment;
+use App\Models\PostReaction;
 use App\Traits\UploadFileTrait;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -18,6 +21,10 @@ class PostController extends Controller
     public function store(StorePostRequest $request)
     {
         $data = $request->validated();
+
+        if (!$data['body'] && !$data['files']) {
+            return redirect()->back();
+        }
 
         DB::beginTransaction();
         try {
@@ -108,7 +115,7 @@ class PostController extends Controller
             $post = Post::where('slug', $slug)->with('attachments')->first();
             if ($post->attachments) {
                 foreach ($post->attachments as $attachment) {
-                    $res = $this->deleteFile('public/posts/'. $attachment->path);
+                    $res = $this->deleteFile('public/posts/' . $attachment->path);
                 }
             }
             $post->delete();
@@ -133,6 +140,41 @@ class PostController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back();
+        }
+    }
+
+    public function likePost($slug)
+    {
+        DB::beginTransaction();
+        try {
+            $post = Post::where('slug', $slug)->firstOrFail();
+
+            $existingReaction = PostReaction::where('post_id', $post->id)
+                ->where('user_id', Auth::id())
+                ->first();
+
+            if ($existingReaction) {
+                $existingReaction->delete();
+                DB::commit();
+                return redirect()->back()->with('success', 'You unliked the post.');
+            }
+
+            PostReaction::create([
+                'post_id' => $post->id,
+                'type' => 'like',
+                'user_id' => Auth::id(),
+            ]);
+
+            DB::commit();
+            return redirect()->back()->with([
+                'success' => 'You liked the post.',
+                'post_id' => $post->id,
+                'user_id' => auth()->user()->id
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'An error occurred while processing your request.');
         }
     }
 

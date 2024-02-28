@@ -2,8 +2,10 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 
 class PostResource extends JsonResource
 {
@@ -14,6 +16,7 @@ class PostResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+
         $attachmentsData = [];
 
         foreach ($this->attachments as $attachment) {
@@ -35,6 +38,8 @@ class PostResource extends JsonResource
             "slug" => $this->slug,
             "user_id" => $this->user_id,
             "group_id" => $this->group_id,
+            "reaction_count" => $this->reactions->count(),
+            "hasLiked"=> $this->reactions->where('user_id', Auth::id())->first() ? true : false,
             "created_at" => $this->created_at->diffForHumans(),
             "attachments" => $attachmentsData,
         ];
