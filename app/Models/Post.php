@@ -31,5 +31,10 @@ class Post extends Model
         return $this->hasMany(PostReaction::class);
     }
 
+    public function comments(): hasMany
+    {
+        return $this->hasMany(PostComment::class);
+    }
+
 
 }

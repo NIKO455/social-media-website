@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePostRequest;
 use App\Models\Post;
 use App\Models\PostAttachment;
+use App\Models\PostComment;
 use App\Models\PostReaction;
 use App\Traits\UploadFileTrait;
 use Carbon\Carbon;
@@ -128,7 +129,7 @@ class PostController extends Controller
         }
     }
 
-    public function deleteAssets($id)
+    public function deleteAssets($id): \Illuminate\Http\RedirectResponse
     {
         DB::beginTransaction();
         try {
@@ -143,7 +144,7 @@ class PostController extends Controller
         }
     }
 
-    public function likePost($slug)
+    public function likePost($slug): \Illuminate\Http\RedirectResponse
     {
         DB::beginTransaction();
         try {
@@ -166,16 +167,75 @@ class PostController extends Controller
             ]);
 
             DB::commit();
-            return redirect()->back()->with([
-                'success' => 'You liked the post.',
-                'post_id' => $post->id,
-                'user_id' => auth()->user()->id
-            ]);
+            return redirect()->back()->with('success', 'You liked the post.');
 
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error', 'An error occurred while processing your request.');
         }
+    }
+
+    public function commentPost(Request $request, $slug): \Illuminate\Http\RedirectResponse
+    {
+        $request->validate([
+            'comment' => 'required'
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $post = Post::where('slug', $slug)->firstOrFail();
+
+            PostComment::create([
+                'post_id' => $post->id,
+                'comment' => $request->comment,
+                'user_id' => Auth()->id(),
+            ]);
+
+            DB::commit();
+            return redirect()->back()->with('success', 'Comment posted successfully.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'An error occurred while processing your request.');
+        }
+
+    }
+
+    public function deleteComment($id)
+    {
+        DB::beginTransaction();
+        try {
+            $comment = PostComment::findOrFail($id);
+            $comment->delete();
+            DB::commit();
+            return redirect()->back();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back();
+        }
+    }
+
+    public function updateComment(Request $request)
+    {
+        $request->validate([
+            'comment' => 'required',
+            'updateId' => 'required',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $comment = PostComment::findOrFail($request->updateId);
+            $comment->update([
+                'comment' => $request->comment
+            ]);
+            DB::commit();
+            return redirect()->back();
+
+        }catch (\Exception $e){
+            DB::rollBack();
+            return redirect()->back();
+        }
+
     }
 
 }

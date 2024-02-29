@@ -35,11 +35,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::controller(PostController::class)->group(function () {
+        //post
         Route::post('/store/post', 'store')->name('store.post');
         Route::delete('/delete/assets/{id}', 'deleteAssets')->name('delete.assets');
         Route::post('/update/post/{slug}', 'update')->name('update.post');
         Route::delete('/delete/post/{slug}', 'delete')->name('delete.post');
-        Route::put('/like/post/{slug}', 'likePost')->name('like.post');
+
+        //like
+        Route::post('/like/post/{slug}', 'likePost')->name('like.post');
+
+        //comment
+        Route::post('/comment/post/{slug}', 'commentPost')->name('comment.post');
+        Route::delete('/delete/comment/{id}', 'deleteComment')->name('comment.post');
+        Route::put('/update/comment', 'updateComment')->name('update.comment');
     });
 
     Route::controller(IndexController::class)->group(function () {

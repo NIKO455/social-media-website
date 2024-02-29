@@ -6,6 +6,7 @@ import PrimaryButton from "@/Components/PrimaryButton.vue";
 import InfoButton from "@/Components/InfoButton.vue";
 import Modal from "@/Components/Modal.vue";
 import {ref} from "vue";
+import TextInput from "@/Components/TextInput.vue";
 
 const form = useForm({})
 
@@ -16,6 +17,7 @@ const {user, post} = defineProps({
 
 
 const showCreatePost = ref(false);
+let showMoreComments = ref(false);
 
 const createPost = () => {
     showCreatePost.value = true;
@@ -25,7 +27,7 @@ const closeModal = () => {
     showCreatePost.value = false;
 }
 
-
+const text = ref('like');
 let postFiles = [];
 const postOldFileSrc = ref(post.attachments ?? []);
 const postFileSrc = ref('');
@@ -34,6 +36,12 @@ const updateForm = useForm({
     body: post.body,
     files: null,
 });
+
+const commentForm = useForm({
+    comment: '',
+    updateId: '',
+})
+
 
 function postSelectFile(event) {
     const maxFiles = 2;
@@ -95,19 +103,51 @@ const isImage = (attachment) => {
     return attachment.mime.includes('jpg') || attachment.mime.includes('jpeg') || attachment.mime.includes('png') || attachment.mime.includes('gif');
 };
 
-const text = ref('like');
 
-function likePost($slug) {
-    form.put(`/like/post/${$slug}`, {
+function likePost(slug) {
+    form.post(`/like/post/${slug}`, {
         onSuccess: () => {
         }
     });
+}
+
+function submitComment(slug) {
+    commentForm.post(`/comment/post/${slug}`, {
+        onSuccess: () => {
+            commentForm.comment = '';
+        }
+    });
+}
+
+function deleteComment(id) {
+    form.delete(`/delete/comment/${id}`, {
+        onSuccess: () => {
+            console.log("Deleted Comment")
+        }
+    });
+}
+
+function updateComment() {
+    commentForm.put(`/update/comment`, {
+        onSuccess: () => {
+            commentForm.comment = '';
+        }
+    })
+}
+
+let editComment = false;
+
+function editPost(comment) {
+    commentForm.comment = comment.comment;
+    commentForm.updateId = comment.id;
+    editComment = !editComment;
 }
 
 
 </script>
 
 <template>
+
 
     <Modal :show="showCreatePost" @close="closeModal">
         <div class="bg-gray-700 p-5">
@@ -204,12 +244,12 @@ function likePost($slug) {
     </Modal>
 
 
-    <div class="mt-10">
+    <div class="mt-7 bg-red-800 p-3 rounded">
         <div class="flex align-item justify-between">
             <div class="flex gap-3">
                 <img
                     :src="user.avatar_url || 'https://i.pinimg.com/736x/8b/16/7a/8b167af653c2399dd93b952a48740620.jpg'"
-                    class="w-12 h-12 rounded-full object-cover" alt="user-image cursor-pointer"
+                    class="w-12 h-12 rounded object-cover" alt="user-image cursor-pointer"
                 >
                 <div>
                     <div class="text-[15px] font-bold pb-1 flex items-center ">
@@ -302,7 +342,6 @@ function likePost($slug) {
                 </div>
             </div>
         </div>
-
         <div class="grid grid-cols-3 mt-2 border-t-2 border-b-2 pt-1 pb-1 border-gray-300">
             <button class="flex items-center justify-center gap-2 w-full hover:bg-[#111827] p-1 rounded"
                     @click="likePost(post.slug)">
@@ -316,15 +355,19 @@ function likePost($slug) {
                 <span>{{ post.hasLiked ? 'Liked' : 'Like' }}</span>
             </button>
 
-            <button class="flex items-center justify-center gap-2 w-full hover:bg-[#111827] p-1 rounded">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                    <path
-                        d="M4.913 2.658c2.075-.27 4.19-.408 6.337-.408 2.147 0 4.262.139 6.337.408 1.922.25 3.291 1.861 3.405 3.727a4.403 4.403 0 0 0-1.032-.211 50.89 50.89 0 0 0-8.42 0c-2.358.196-4.04 2.19-4.04 4.434v4.286a4.47 4.47 0 0 0 2.433 3.984L7.28 21.53A.75.75 0 0 1 6 21v-4.03a48.527 48.527 0 0 1-1.087-.128C2.905 16.58 1.5 14.833 1.5 12.862V6.638c0-1.97 1.405-3.718 3.413-3.979Z"/>
-                    <path
-                        d="M15.75 7.5c-1.376 0-2.739.057-4.086.169C10.124 7.797 9 9.103 9 10.609v4.285c0 1.507 1.128 2.814 2.67 2.94 1.243.102 2.5.157 3.768.165l2.782 2.781a.75.75 0 0 0 1.28-.53v-2.39l.33-.026c1.542-.125 2.67-1.433 2.67-2.94v-4.286c0-1.505-1.125-2.811-2.664-2.94A49.392 49.392 0 0 0 15.75 7.5Z"/>
-                </svg>
+            <div class="flex items-center justify-center gap-2 w-full hover:bg-[#111827] p-1 rounded">
+                <div class="flex gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                        <path
+                            d="M4.913 2.658c2.075-.27 4.19-.408 6.337-.408 2.147 0 4.262.139 6.337.408 1.922.25 3.291 1.861 3.405 3.727a4.403 4.403 0 0 0-1.032-.211 50.89 50.89 0 0 0-8.42 0c-2.358.196-4.04 2.19-4.04 4.434v4.286a4.47 4.47 0 0 0 2.433 3.984L7.28 21.53A.75.75 0 0 1 6 21v-4.03a48.527 48.527 0 0 1-1.087-.128C2.905 16.58 1.5 14.833 1.5 12.862V6.638c0-1.97 1.405-3.718 3.413-3.979Z"/>
+                        <path
+                            d="M15.75 7.5c-1.376 0-2.739.057-4.086.169C10.124 7.797 9 9.103 9 10.609v4.285c0 1.507 1.128 2.814 2.67 2.94 1.243.102 2.5.157 3.768.165l2.782 2.781a.75.75 0 0 0 1.28-.53v-2.39l.33-.026c1.542-.125 2.67-1.433 2.67-2.94v-4.286c0-1.505-1.125-2.811-2.664-2.94A49.392 49.392 0 0 0 15.75 7.5Z"/>
+                    </svg>
+                    <span v-if="post.comments.length > 0">{{ post.comments.length }}</span>
+                </div>
                 Comment
-            </button>
+            </div>
+
             <button class="flex items-center justify-center gap-2 w-full hover:bg-[#111827] p-1 rounded">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" stroke-width="1.5"
                      stroke="currentColor" class="w-6 h-6">
@@ -334,6 +377,157 @@ function likePost($slug) {
                 Share
             </button>
         </div>
+        <div class="flex mt-2 relative">
+            <TextInput v-model="commentForm.comment" placeholder="Add a comment"
+                       class="w-full pr-[5rem]"></TextInput>
+            <div class="relative">
+                <button class="absolute bg-blue-500 p-2 rounded text-white right-0 mt-[1px]" v-if="editComment"
+                        @click="updateComment(post.slug)">Update
+                </button>
+                <button class="absolute bg-blue-500 p-2 rounded text-white right-0 mt-[1px]" v-else
+                        @click="submitComment(post.slug)">Submit
+                </button>
+            </div>
+        </div>
+
+        <div v-for="(comment, index) in post.comments">
+            <div v-if="index === 0 && !showMoreComments"  class="bg-[#1F2937] p-2 rounded mt-2">
+                <div class="flex justify-between">
+                    <div class="flex gap-2 mt-2">
+                        <div>
+                            <img
+                                :src="comment.user.avatar_url || 'https://i.pinimg.com/736x/8b/16/7a/8b167af653c2399dd93b952a48740620.jpg'"
+                                class="w-12 h-12 rounded-full object-cover" alt="user-image cursor-pointer"
+                            >
+                        </div>
+
+                        <div class="">
+                            <Link :href="route('profile', comment.user.name)"
+                                  class="text-sm text-gray-400 hover:underline hover:cursor-pointer">
+                                {{ comment.user.name }}
+                            </Link>
+                            <p class="text-sm text-gray-400">{{ comment.created_at }}</p>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="relative">
+                            <Menu>
+                                <MenuButton>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                         stroke-width="1.5"
+                                         stroke="currentColor" class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                              d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"/>
+                                    </svg>
+                                </MenuButton>
+                                <MenuItems class="flex flex-col absolute bg-[#111827] right-2 w-40 rounded">
+                                    <MenuItem v-slot="{ active }"
+                                              class="p-3 text-sm hover:rounded hover:bg-gray-700">
+                                        <a :class='{ "bg-blue-500": active }' @click="editPost(comment)">
+                                            Edit Comment
+                                        </a>
+                                    </MenuItem>
+                                    <MenuItem v-slot="{ active }"
+                                              class="p-3 text-sm hover:rounded hover:bg-gray-700 cursor-pointer">
+                                        <a :class='{ "bg-blue-500": active }' @click="deleteComment(comment.id)">
+                                            Delete Comment
+                                        </a>
+                                    </MenuItem>
+                                </MenuItems>
+                            </Menu>
+                        </div>
+                    </div>
+                </div>
+                <p class="mt-2">
+                    <div class="pl-2 pr-2 mt-2">
+                        <Disclosure v-slot="{ open }">
+                            <span v-if="!open" v-html="comment.comment.substring(0,90)" class="mr-2"/>
+                            <DisclosurePanel>
+                                <span v-html="comment.comment"/>
+                            </DisclosurePanel>
+                            <DisclosureButton>
+                            <span class="text-[13px] text-blue-600 hover:underline" v-if="comment.comment.length > 90">
+                                {{ open ? 'Read Less' : 'Read More' }}
+                            </span>
+                            </DisclosureButton>
+                        </Disclosure>
+                    </div>
+                </p>
+            </div>
+
+            <div v-if="showMoreComments"  class="bg-[#1F2937] p-2 rounded mt-2">
+                <div class="flex justify-between">
+                    <div class="flex gap-2 mt-2">
+                        <div>
+                            <img
+                                :src="comment.user.avatar_url || 'https://i.pinimg.com/736x/8b/16/7a/8b167af653c2399dd93b952a48740620.jpg'"
+                                class="w-12 h-12 rounded-full object-cover" alt="user-image cursor-pointer"
+                            >
+                        </div>
+
+                        <div class="">
+                            <Link :href="route('profile', comment.user.name)"
+                                  class="text-sm text-gray-400 hover:underline hover:cursor-pointer">
+                                {{ comment.user.name }}
+                            </Link>
+                            <p class="text-sm text-gray-400">{{ comment.created_at }}</p>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="relative">
+                            <Menu>
+                                <MenuButton>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                         stroke-width="1.5"
+                                         stroke="currentColor" class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                              d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"/>
+                                    </svg>
+                                </MenuButton>
+                                <MenuItems class="flex flex-col absolute bg-[#111827] right-2 w-40 rounded">
+                                    <MenuItem v-slot="{ active }"
+                                              class="p-3 text-sm hover:rounded hover:bg-gray-700">
+                                        <a :class='{ "bg-blue-500": active }' @click="editPost(comment)">
+                                            Edit Comment
+                                        </a>
+                                    </MenuItem>
+                                    <MenuItem v-slot="{ active }"
+                                              class="p-3 text-sm hover:rounded hover:bg-gray-700 cursor-pointer">
+                                        <a :class='{ "bg-blue-500": active }' @click="deleteComment(comment.id)">
+                                            Delete Comment
+                                        </a>
+                                    </MenuItem>
+                                </MenuItems>
+                            </Menu>
+                        </div>
+                    </div>
+                </div>
+                <p class="mt-2">
+                    <div class="pl-2 pr-2 mt-2">
+                        <Disclosure v-slot="{ open }">
+                            <span v-if="!open" v-html="comment.comment.substring(0,90)" class="mr-2"/>
+                            <DisclosurePanel>
+                                <span v-html="comment.comment"/>
+                            </DisclosurePanel>
+                            <DisclosureButton>
+                            <span class="text-[13px] text-blue-600 hover:underline" v-if="comment.comment.length > 90">
+                                {{ open ? 'Read Less' : 'Read More' }}
+                            </span>
+                            </DisclosureButton>
+                        </Disclosure>
+                    </div>
+                </p>
+            </div>
+        </div>
+        <div class="text-center mt-2" v-if="post.comments.length > 1">
+            <button @click="showMoreComments = true" v-if="!showMoreComments"
+                    class="text-blue-600 hover:underline text-sm text-center">Show More Comments
+            </button>
+            <button @click="showMoreComments = false" v-if="showMoreComments"
+                    class="text-blue-600 hover:underline text-sm text-center">Show Less Comments
+            </button>
+        </div>
+
     </div>
 </template>
 
