@@ -397,11 +397,11 @@ function editPost(comment) {
                         <div>
                             <img
                                 :src="comment.user.avatar_url || 'https://i.pinimg.com/736x/8b/16/7a/8b167af653c2399dd93b952a48740620.jpg'"
-                                class="w-12 h-12 rounded-full object-cover" alt="user-image cursor-pointer"
+                                class="w-10 h-10 rounded-full object-cover" alt="user-image cursor-pointer"
                             >
                         </div>
 
-                        <div class="">
+                        <div class="mt-[-5px]">
                             <Link :href="route('profile', comment.user.name)"
                                   class="text-sm text-gray-400 hover:underline hover:cursor-pointer">
                                 {{ comment.user.name }}
@@ -461,11 +461,11 @@ function editPost(comment) {
                         <div>
                             <img
                                 :src="comment.user.avatar_url || 'https://i.pinimg.com/736x/8b/16/7a/8b167af653c2399dd93b952a48740620.jpg'"
-                                class="w-12 h-12 rounded-full object-cover" alt="user-image cursor-pointer"
+                                class="w-10 h-10 rounded-full object-cover" alt="user-image cursor-pointer"
                             >
                         </div>
 
-                        <div class="">
+                        <div class="mt-[-5px]">
                             <Link :href="route('profile', comment.user.name)"
                                   class="text-sm text-gray-400 hover:underline hover:cursor-pointer">
                                 {{ comment.user.name }}

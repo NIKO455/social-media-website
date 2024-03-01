@@ -15,7 +15,9 @@ class IndexController extends Controller
     public function index(): \Inertia\Response
     {
         $user = new UserResource(auth()->user());
-        $posts = PostResource::collection(Post::with('attachments', 'reactions', 'comments')->orderBy('id', 'DESC')->get());
+        $posts = PostResource::collection(Post::with(['attachments', 'reactions', 'comments'=> function($query){
+           $query->orderBy('id', 'DESC');
+        }])->orderBy('id', 'DESC')->get());
         if (auth()->check()) {
             return Inertia::render('Pages/Home',compact('user', 'posts'));
         }
