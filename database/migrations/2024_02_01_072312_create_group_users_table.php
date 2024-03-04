@@ -21,7 +21,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('group_id')->constrained('groups');
             $table->foreignId('created_by')->constrained('users');
-            $table->timestamp('created_at')->nullable();
+            $table->timestamps();
         });
     }
 

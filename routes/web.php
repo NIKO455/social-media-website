@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\GroupController;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
@@ -23,6 +24,10 @@ Route::controller(ProfileController::class)->group(function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
+
+    Route::controller(IndexController::class)->group(function () {
+        Route::get('/', 'index')->name('home');
+    });
 
     Route::controller(ProfileController::class)->group(function () {
         Route::get('/profile/edit', 'edit')->name('profile.edit');
@@ -50,9 +55,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('/update/comment', 'updateComment')->name('update.comment');
     });
 
-    Route::controller(IndexController::class)->group(function () {
-        Route::get('/', 'index')->name('home');
+    Route::controller(GroupController::class)->group(function () {
+        Route::post('/create/group', 'store')->name('group.store');
     });
+
 
 });
 

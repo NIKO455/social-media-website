@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\PostResource;
 use App\Http\Resources\UserResource;
+use App\Models\Group;
 use App\Models\Post;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
@@ -18,8 +19,9 @@ class IndexController extends Controller
         $posts = PostResource::collection(Post::with(['attachments', 'reactions', 'comments'=> function($query){
            $query->orderBy('id', 'DESC');
         }])->orderBy('id', 'DESC')->get());
+        $groups = Group::all();
         if (auth()->check()) {
-            return Inertia::render('Pages/Home',compact('user', 'posts'));
+            return Inertia::render('Pages/Home',compact('user', 'posts', 'groups'));
         }
         return Inertia::render('Auth/Login');
     }

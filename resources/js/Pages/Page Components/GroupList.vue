@@ -1,22 +1,29 @@
 <script setup>
 import GroupItem from "@/Components/GroupItem.vue";
 import TextInput from "@/Components/TextInput.vue";
-import {Link} from "@inertiajs/vue3";
+import {Link, router, useForm} from "@inertiajs/vue3";
 import Modal from "@/Components/Modal.vue";
-import InfoButton from "@/Components/InfoButton.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
-import {ref} from "vue";
+import {reactive, ref} from "vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import TextArea from "@/Components/TextArea.vue";
 import Checkbox from "@/Components/Checkbox.vue";
 
+const showCreateGroup = ref(false);
+
 defineProps({
+    groups: Object,
     image: String,
     title: String,
     description: String
 })
 
-const showCreateGroup = ref(false);
+const form = useForm({
+    name: null,
+    description: null,
+    auto_approval: true,
+})
+
 
 const createGroup = () => {
     showCreateGroup.value = true;
@@ -24,6 +31,17 @@ const createGroup = () => {
 
 const closeModal = () => {
     showCreateGroup.value = false;
+}
+
+function submit(){
+    form.post(route('group.store'), {
+        onSuccess: () => {
+            form.name = null
+            form.description = null
+            form.auto_approval = true
+            showCreateGroup.value = false
+        }
+    })
 }
 
 </script>
@@ -51,18 +69,18 @@ const closeModal = () => {
                 <hr class="my-2">
                 <InputLabel class="mb-1 ml-1">Group Name</InputLabel>
                 <TextInput type="text" class="w-full mb-4 bg-gray-700 dark:bg-gray-800 rounded-md"
-                           placeholder="Group name" model-value=""/>
+                           placeholder="Group name" v-model="form.name"/>
 
                 <div class="flex gap-3 items-center mb-2 mt-1">
-                    <InputLabel class="mb-1 ml-1">Private Group</InputLabel>
-                    <Checkbox checked="" class="h-5 w-5"></Checkbox>
+                    <InputLabel class="mb-1 ml-1">Enable Auto Approval</InputLabel>
+                    <Checkbox checked="checked" v-model="form.auto_approval" class="h-5 w-5"></Checkbox>
                 </div>
 
                 <InputLabel class="mb-1 ml-1">Group Description</InputLabel>
                 <TextArea type="text" class="w-full mb-4 bg-gray-700 dark:bg-gray-800 rounded-md"
-                          placeholder="Group description" model-value=""/>
+                          placeholder="Group description" v-model="form.description"/>
 
-                <PrimaryButton>Create Group</PrimaryButton>
+                <PrimaryButton @click="submit">Create Group</PrimaryButton>
             </div>
         </Modal>
         <div class="py-5">
@@ -73,15 +91,11 @@ const closeModal = () => {
                 <TextInput type="text" class="w-full mb-4 bg-gray-700 dark:bg-gray-800 rounded-md"
                            placeholder="Search for groups" model-value=""/>
 
-                <GroupItem image="https://cdn.pixabay.com/photo/2015/04/19/08/32/marguerite-729510_640.jpg"
-                           title="Laravel Developer"
-                           description="Laravel developer are one of the best person in the whole world."/>
-                <GroupItem image="https://cdn.pixabay.com/photo/2015/04/19/08/32/marguerite-729510_640.jpg"
-                           title="Vue Developer"
-                           description="Laravel developer are one of the best person in the whole world."/>
-                <GroupItem image="https://cdn.pixabay.com/photo/2015/04/19/08/32/marguerite-729510_640.jpg"
-                           title="JavaScript Developer"
-                           description="Laravel developer are one of the best person in the whole world."/>
+                <div v-for="group in groups">
+                    <GroupItem :slug="group.slug"
+                               image="https://cdn.pixabay.com/photo/2015/04/19/08/32/marguerite-729510_640.jpg"
+                               :title="group.name" :description="group.description"/>
+                </div>
             </div>
         </div>
     </div>
