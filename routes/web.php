@@ -23,6 +23,10 @@ Route::controller(ProfileController::class)->group(function () {
     Route::get('/u/{user}', 'profile')->name('profile');
 });
 
+Route::controller(GroupController::class)->group(function () {
+    Route::get('/g/{group}', 'index')->name('index.group');
+});
+
 Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::controller(IndexController::class)->group(function () {

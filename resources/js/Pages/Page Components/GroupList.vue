@@ -9,7 +9,7 @@ import InputLabel from "@/Components/InputLabel.vue";
 import TextArea from "@/Components/TextArea.vue";
 import Checkbox from "@/Components/Checkbox.vue";
 
-const showCreateGroup = ref(false);
+let showCreateGroup = ref(false);
 
 defineProps({
     groups: Object,

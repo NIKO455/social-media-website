@@ -4,15 +4,18 @@ import {Tab, TabGroup, TabList, TabPanel, TabPanels} from "@headlessui/vue";
 import {ref} from "vue";
 import {useForm} from '@inertiajs/vue3'
 import PrimaryButton from "@/Components/PrimaryButton.vue";
+import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
 import TabListItem from "@/Pages/Page Components/TabListItem.vue";
 import AboutContainer from "@/Pages/Page Components/AboutContainer.vue";
 import FollowersContainer from "@/Pages/Page Components/FollowersContainer.vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
 import DropdownLinkButton from "@/Components/DropdownLinkButton.vue";
+import MainContent from "@/Pages/Page Components/MainContent.vue";
 import PostCardItem from "@/Components/PostCardItem.vue";
+import GroupContainer from "@/Pages/Page Components/GroupContainer.vue";
 
-const {user} = defineProps({user: Object})
+const {group} = defineProps({group: Object})
 
 let coverImageFile = null;
 let profileImageFile = null;
@@ -49,7 +52,7 @@ function uploadProfileImage(event) {
         }
         reader.readAsDataURL(profileImageFile);
     }
-    form.post(`/profile/update/${user.id}`)
+    form.post(`/profile/update/${group.id}`)
 
 }
 
@@ -60,7 +63,7 @@ function cancelCoverImage() {
 
 
 function submitCoverImage() {
-    coverForm.post((`/cover/update/${user.id}`), {
+    coverForm.post((`/cover/update/${group.id}`), {
         onSuccess: () => {
             coverImageSrc.value = null;
         }
@@ -78,10 +81,10 @@ function submitCoverImage() {
                     class="mobile-profile-container bg-[#1F2937] rounded-md w-full lg:h-[91%] md:h-[91%] md:overflow-auto lg:overflow-auto">
                     <div>
                         <div class="relative">
-                            <!--  User Cover photo-->
+                            <!--  group Cover photo-->
                             <div class="relative">
                                 <img
-                                    :src="coverImageSrc || user.cover_url || 'https://generalassemb.ly/sites/default/files/styles/program_header_desktop_xxl_1x/public/2023-06/PT_AN_Header_0623.jpg?itok=83sR_pF_'"
+                                    :src="coverImageSrc || group.cover_url || 'https://png.pngtree.com/thumb_back/fh260/back_our/20190620/ourmid/pngtree-taobao-children-s-education-group-buy-poster-banner-background-image_159575.jpg'"
                                     alt=""
                                     class="w-full h-[230px] object-cover rounded-tl-lg rounded-tr-lg cover-image">
                                 <div class="absolute right-5 top-5 w-full">
@@ -162,7 +165,7 @@ function submitCoverImage() {
                                         <!-- profile image -->
                                         <div class="relative w-[204px] profile-edit">
                                             <img
-                                                :src="profileImageSrc || user.avatar_url || 'https://i.pinimg.com/736x/8b/16/7a/8b167af653c2399dd93b952a48740620.jpg'"
+                                                :src="profileImageSrc || group.avatar_url || 'https://as2.ftcdn.net/v2/jpg/06/08/22/35/1000_F_608223571_kK7unat5zGjADbMqAKUZK0yBoU93LbHG.jpg'"
                                                 alt=""
                                                 class="h-[150px] w-[150px] object-cover rounded-full mt-[-80px]">
 
@@ -191,7 +194,7 @@ function submitCoverImage() {
                                                         </div>
                                                     </DropdownLinkButton>
                                                     <DropdownLink
-                                                        :href="route('profile.remove', $page.props.auth.user.id)"
+                                                        :href="route('profile.remove', group.id)"
                                                         method="delete" as="button">
                                                         Remove Profile
                                                     </DropdownLink>
@@ -216,7 +219,7 @@ function submitCoverImage() {
                                         </div>
                                         <PrimaryButton
                                             class="w-40 desktop-edit-btn">
-                                            <a :href="route('profile.edit')">Edit Profile</a>
+                                            <a :href="route('profile.edit')">Edit Group</a>
                                         </PrimaryButton>
 
                                         <PrimaryButton class="lg:hidden md:hidden profile-edit-button">
@@ -234,22 +237,11 @@ function submitCoverImage() {
                                         <TabPanels class="mt-2">
                                             <TabPanel
                                                 :class="['rounded-xl bg-[#111827] dark:text-white p-3','ring-white/60 ring-offset-0 focus:outline-none focus:ring-0',]">
-                                                <AboutContainer :user="user"/>
+                                                <GroupContainer :group="group"/>
                                             </TabPanel>
                                             <TabPanel
                                                 :class="['rounded-xl bg-[#111827] dark:text-white p-3','ring-white/60 ring-offset-0 focus:outline-none focus:ring-0',]">
-
-                                                <div v-if="user.posts.length > 0" class="bg-[#1F2937] p-3 w-[40vw] m-auto rounded">
-                                                    <div v-for="post in user.posts" :key="post.id">
-                                                        <div v-if="post.body !== null || post.attachments.length > 0">
-                                                            <PostCardItem :post="post" :user="user"/>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div v-else>
-                                                    <p class="text-center">No posts found</p>
-                                                </div>
-
+                                                Post
                                             </TabPanel>
                                             <TabPanel
                                                 :class="['rounded-xl bg-[#111827] dark:text-white p-3','ring-white/60 ring-offset-0 focus:outline-none focus:ring-0',]">
