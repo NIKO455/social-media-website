@@ -52,7 +52,7 @@ function uploadProfileImage(event) {
         }
         reader.readAsDataURL(profileImageFile);
     }
-    form.post(`/profile/update/${group.id}`)
+    form.post(`/group/profile/update/${group.id}`)
 
 }
 
@@ -63,7 +63,7 @@ function cancelCoverImage() {
 
 
 function submitCoverImage() {
-    coverForm.post((`/cover/update/${group.id}`), {
+    coverForm.post((`/group/cover/update/${group.id}`), {
         onSuccess: () => {
             coverImageSrc.value = null;
         }
@@ -84,7 +84,7 @@ function submitCoverImage() {
                             <!--  group Cover photo-->
                             <div class="relative">
                                 <img
-                                    :src="coverImageSrc || group.cover_url || 'https://png.pngtree.com/thumb_back/fh260/back_our/20190620/ourmid/pngtree-taobao-children-s-education-group-buy-poster-banner-background-image_159575.jpg'"
+                                    :src="coverImageSrc || group.group_cover || 'https://png.pngtree.com/thumb_back/fh260/back_our/20190620/ourmid/pngtree-taobao-children-s-education-group-buy-poster-banner-background-image_159575.jpg'"
                                     alt=""
                                     class="w-full h-[230px] object-cover rounded-tl-lg rounded-tr-lg cover-image">
                                 <div class="absolute right-5 top-5 w-full">
@@ -165,7 +165,7 @@ function submitCoverImage() {
                                         <!-- profile image -->
                                         <div class="relative w-[204px] profile-edit">
                                             <img
-                                                :src="profileImageSrc || group.avatar_url || 'https://as2.ftcdn.net/v2/jpg/06/08/22/35/1000_F_608223571_kK7unat5zGjADbMqAKUZK0yBoU93LbHG.jpg'"
+                                                :src="profileImageSrc || group.group_profile || 'https://as2.ftcdn.net/v2/jpg/06/08/22/35/1000_F_608223571_kK7unat5zGjADbMqAKUZK0yBoU93LbHG.jpg'"
                                                 alt=""
                                                 class="h-[150px] w-[150px] object-cover rounded-full mt-[-80px]">
 
@@ -194,7 +194,7 @@ function submitCoverImage() {
                                                         </div>
                                                     </DropdownLinkButton>
                                                     <DropdownLink
-                                                        :href="route('profile.remove', group.id)"
+                                                        :href="route('group.profile.remove', group.id)"
                                                         method="delete" as="button">
                                                         Remove Profile
                                                     </DropdownLink>

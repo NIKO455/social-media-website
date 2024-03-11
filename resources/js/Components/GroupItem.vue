@@ -10,8 +10,10 @@ defineProps({
 <template>
     <a :href="'/g/' + slug">
         <div class="flex gap-3 p-2 hover:bg-[#111827] cursor-pointer rounded-md">
-            <img :src="image" alt="group-image"
-                 class="h-12 w-12 rounded-full object-cover">
+            <div class="h-12 w-20">
+                <img :src="image" alt="group-image"
+                     class="h-12 w-12 rounded-full object-cover">
+            </div>
             <div>
                 <p class="text-[16px] font-bold pb-1">{{ title }}</p>
                 <p>

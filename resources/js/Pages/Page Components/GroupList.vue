@@ -93,7 +93,7 @@ function submit(){
 
                 <div v-for="group in groups">
                     <GroupItem :slug="group.slug"
-                               image="https://cdn.pixabay.com/photo/2015/04/19/08/32/marguerite-729510_640.jpg"
+                               :image="group.group_profile || 'https://cdn.pixabay.com/photo/2015/04/19/08/32/marguerite-729510_640.jpg'"
                                :title="group.name" :description="group.description"/>
                 </div>
             </div>

@@ -9,6 +9,7 @@ use App\Http\Resources\GroupResource;
 use App\Models\Group;
 use App\Models\GroupUser;
 use App\Models\User;
+use App\Traits\UploadFileTrait;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,6 +19,8 @@ use Inertia\Inertia;
 
 class GroupController extends Controller
 {
+
+    use UploadFileTrait;
 
     public function index($group)
     {
@@ -61,15 +64,17 @@ class GroupController extends Controller
         }
     }
 
-    public function coverPhoto(Request $request, $id): RedirectResponse
+    public function groupProfile(Request $request, $id): RedirectResponse
     {
         DB::beginTransaction();
         try {
-            $user = User::findorFail($id);
-            $oldPath = $user->cover_path;
-            $this->deleteFile($oldPath);
-            $imagePath = $this->uploadFile($request, 'cover_path', $oldPath, 'public/users');
-            $user->update(['cover_path' => $imagePath]);
+            $group = Group::findorFail($id);
+            $oldPath = $group->group_profile;
+            if ($oldPath) {
+                $this->deleteFile($oldPath);
+            }
+            $imagePath = $this->uploadFile($request, 'profile_path', $oldPath, 'public/groups');
+            $group->update(['group_profile' => $imagePath]);
             DB::commit();
             return redirect()->back()->with('message', 'Cover Photo Updated');
         } catch (\Exception $e) {
@@ -78,15 +83,17 @@ class GroupController extends Controller
         }
     }
 
-    public function profilePhoto(Request $request, $id): RedirectResponse
+    public function groupCover(Request $request, $id): RedirectResponse
     {
         DB::beginTransaction();
         try {
-            $user = User::findorFail($id);
-            $oldPath = $user->avatar_path;
-            $this->deleteFile($oldPath);
-            $imagePath = $this->uploadFile($request, 'profile_path', $oldPath, 'public/users');
-            $user->update(['avatar_path' => $imagePath]);
+            $group = Group::findorFail($id);
+            $oldPath = $group->group_cover;
+            if ($oldPath) {
+                $this->deleteFile($oldPath);
+            }
+            $imagePath = $this->uploadFile($request, 'cover_path', $oldPath, 'public/groups');
+            $group->update(['group_cover' => $imagePath]);
             DB::commit();
             return redirect()->back();
         } catch (\Exception $e) {
@@ -95,13 +102,13 @@ class GroupController extends Controller
         }
     }
 
-    public function removeProfile($id): RedirectResponse
+    public function removeGroupProfile($id): RedirectResponse
     {
         DB::beginTransaction();
         try {
-            $user = User::findorFail($id);
-            $this->deleteFile($user->avatar_path);
-            $user->update(['avatar_path' => null]);
+            $group = Group::findorFail($id);
+            $this->deleteFile($group->group_profile);
+            $group->update(['group_profile' => null]);
             DB::commit();
             return redirect()->back();
         } catch (\Exception $e) {

@@ -14,12 +14,16 @@ class GroupResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $coverUrl = $this->group_cover ? asset('storage/' . $this->group_cover) : null;
+        $profileUrl = $this->group_profile ? asset('storage/' . $this->group_profile) : null;
+
+
         return [
             "id" => $this->id,
             "name" => $this->name,
             "slug" => $this->slug,
-            "cover_path" => '',
-            "thumbnail_path" => '',
+            "group_profile" => $profileUrl,
+            "group_cover" => $coverUrl,
             "auto_approval" => $this->auto_approval,
             "description" => $this->description,
             "created_by" => 1,
