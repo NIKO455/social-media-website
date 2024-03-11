@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 use Inertia\Inertia;
 
 class GroupController extends Controller
@@ -62,6 +63,17 @@ class GroupController extends Controller
             DB::rollBack();
             dd($e->getMessage());
         }
+    }
+
+    public function edit($id)
+    {
+        $group = Group::findorFail($id);
+        return Inertia::render('Pages/GroupEdit', ['group'=> $group]);
+    }
+
+    public function update(Request $request)
+    {
+        dd($request->all());
     }
 
     public function groupProfile(Request $request, $id): RedirectResponse

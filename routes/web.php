@@ -61,6 +61,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::controller(GroupController::class)->group(function () {
         Route::post('/create/group', 'store')->name('group.store');
+        Route::get('/group/edit/{id}', 'edit')->name('group.edit');
+        Route::patch('/group/info/update/{id}', 'update')->name('group.info.update');
         Route::post('/group/cover/update/{id}', 'groupCover')->name('group.cover');
         Route::post('/group/profile/update/{id}', 'groupProfile')->name('group.profile');
         Route::delete('/group/profile/remove/{id}', 'removeGroupProfile')->name('group.profile.remove');

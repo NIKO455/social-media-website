@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -17,6 +18,8 @@ class GroupResource extends JsonResource
         $coverUrl = $this->group_cover ? asset('storage/' . $this->group_cover) : null;
         $profileUrl = $this->group_profile ? asset('storage/' . $this->group_profile) : null;
 
+        $user = User::where('id', $this->created_by)->first();
+
 
         return [
             "id" => $this->id,
@@ -26,7 +29,7 @@ class GroupResource extends JsonResource
             "group_cover" => $coverUrl,
             "auto_approval" => $this->auto_approval,
             "description" => $this->description,
-            "created_by" => 1,
+            "created_by" => $user,
             "user_status" => ($this->created_by == 1) ? 'admin' : 'user',
             "deleted_at" => $this->deleted_at,
             "deleted_by" => $this->deleted_by,

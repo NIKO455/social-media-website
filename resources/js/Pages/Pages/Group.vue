@@ -13,7 +13,7 @@ import DropdownLink from "@/Components/DropdownLink.vue";
 import DropdownLinkButton from "@/Components/DropdownLinkButton.vue";
 import MainContent from "@/Pages/Page Components/MainContent.vue";
 import PostCardItem from "@/Components/PostCardItem.vue";
-import GroupContainer from "@/Pages/Page Components/GroupContainer.vue";
+import GroupContainer from "@/Pages/Group/GroupContainer.vue";
 
 const {group} = defineProps({group: Object})
 
@@ -219,7 +219,7 @@ function submitCoverImage() {
                                         </div>
                                         <PrimaryButton
                                             class="w-40 desktop-edit-btn">
-                                            <a :href="route('profile.edit')">Edit Group</a>
+                                            <a :href="route('group.edit', group.id)">Edit Group</a>
                                         </PrimaryButton>
 
                                         <PrimaryButton class="lg:hidden md:hidden profile-edit-button">
