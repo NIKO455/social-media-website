@@ -211,10 +211,7 @@ function submitCoverImage() {
                                                 <TabListItem :category="'Posts'" :selected="selected"/>
                                             </Tab>
                                             <Tab as="template" v-slot="{ selected }">
-                                                <TabListItem :category="'Followers'" :selected="selected"/>
-                                            </Tab>
-                                            <Tab as="template" v-slot="{ selected }">
-                                                <TabListItem :category="'Followings'" :selected="selected"/>
+                                                <TabListItem :category="'Members'" :selected="selected"/>
                                             </Tab>
                                         </div>
                                         <PrimaryButton
@@ -245,11 +242,7 @@ function submitCoverImage() {
                                             </TabPanel>
                                             <TabPanel
                                                 :class="['rounded-xl bg-[#111827] dark:text-white p-3','ring-white/60 ring-offset-0 focus:outline-none focus:ring-0',]">
-                                                <FollowersContainer :user="user"/>
-                                            </TabPanel>
-                                            <TabPanel
-                                                :class="['rounded-xl bg-[#111827] dark:text-white p-3','ring-white/60 ring-offset-0 focus:outline-none focus:ring-0',]">
-                                                <FollowersContainer :user="user"/>
+                                                <FollowersContainer :user="group.group_member"/>
                                             </TabPanel>
                                         </TabPanels>
                                     </div>

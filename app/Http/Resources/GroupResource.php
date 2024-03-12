@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Enums\GroupUserStatus;
+use App\Models\GroupUser;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -20,6 +22,7 @@ class GroupResource extends JsonResource
 
         $user = User::where('id', $this->created_by)->first();
 
+        $groupMember = GroupUserResource::collection(GroupUser::where("group_id", $this->id)->where('status', GroupUserStatus::APPROVED->value)->with('user')->get());
 
         return [
             "id" => $this->id,
@@ -29,6 +32,7 @@ class GroupResource extends JsonResource
             "group_cover" => $coverUrl,
             "auto_approval" => $this->auto_approval,
             "description" => $this->description,
+            "group_member" => $groupMember,
             "created_by" => $user,
             "user_status" => ($this->created_by == 1) ? 'admin' : 'user',
             "deleted_at" => $this->deleted_at,

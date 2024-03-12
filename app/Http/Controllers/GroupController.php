@@ -78,6 +78,7 @@ class GroupController extends Controller
 
     public function groupProfile(Request $request, $id): RedirectResponse
     {
+
         DB::beginTransaction();
         try {
             $group = Group::findorFail($id);
