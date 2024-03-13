@@ -71,9 +71,12 @@ class GroupController extends Controller
         return Inertia::render('Pages/GroupEdit', ['group'=> $group]);
     }
 
-    public function update(Request $request)
+    public function update(GroupStoreRequest $request, $id)
     {
-        dd($request->all());
+        $group = Group::findorFail($id);
+        $group->update($request->all());
+
+        return redirect()->back();
     }
 
     public function groupProfile(Request $request, $id): RedirectResponse
