@@ -68,7 +68,7 @@ class GroupController extends Controller
     public function edit($id)
     {
         $group = Group::findorFail($id);
-        return Inertia::render('Pages/GroupEdit', ['group'=> $group]);
+        return Inertia::render('Pages/GroupEdit', ['group' => $group]);
     }
 
     public function update(GroupStoreRequest $request, $id)
@@ -125,6 +125,69 @@ class GroupController extends Controller
             $group = Group::findorFail($id);
             $this->deleteFile($group->group_profile);
             $group->update(['group_profile' => null]);
+            DB::commit();
+            return redirect()->back();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            dd($e->getMessage());
+        }
+
+    }
+
+    public function joinGroup($id)
+    {
+        $res = GroupUser::where('group_id', $id)->where('user_id', Auth::id())->first();
+        if ($res) {
+            return redirect()->back();
+        }
+
+        DB::beginTransaction();
+        try {
+
+            GroupUser::create([
+                'status' => GroupUserStatus::PENDING->value,
+                'role' => GroupUserRole::USER->value,
+                'user_id' => Auth::id(),
+                'group_id' => $id,
+                'created_by' => Auth::id(),
+            ]);
+
+            DB::commit();
+            return redirect()->back();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            dd($e->getMessage());
+        }
+
+    }
+
+    public function acceptGroup($id)
+    {
+
+        DB::beginTransaction();
+        try {
+            $groupUser = GroupUser::findorFail($id);
+            $groupUser->update([
+                'status' => GroupUserStatus::APPROVED->value
+            ]);
+
+            DB::commit();
+            return redirect()->back();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            dd($e->getMessage());
+        }
+
+    }
+
+    public function rejectGroup($id)
+    {
+
+        DB::beginTransaction();
+        try {
+            $groupUser = GroupUser::findorFail($id);
+            $groupUser->delete();
+
             DB::commit();
             return redirect()->back();
         } catch (\Exception $e) {

@@ -7,6 +7,7 @@ use App\Models\GroupUser;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 
 class GroupResource extends JsonResource
 {
@@ -20,9 +21,12 @@ class GroupResource extends JsonResource
         $coverUrl = $this->group_cover ? asset('storage/' . $this->group_cover) : null;
         $profileUrl = $this->group_profile ? asset('storage/' . $this->group_profile) : null;
 
-        $user = User::where('id', $this->created_by)->first();
+        $user = new UserResource(User::where('id', $this->created_by)->first());
 
         $groupMember = GroupUserResource::collection(GroupUser::where("group_id", $this->id)->where('status', GroupUserStatus::APPROVED->value)->with('user')->get());
+
+        $groupMeberApprove = GroupUserResource::collection(GroupUser::where("group_id", $this->id)->where('status', GroupUserStatus::PENDING->value)->with('user')->get());
+
 
         return [
             "id" => $this->id,
@@ -33,8 +37,9 @@ class GroupResource extends JsonResource
             "auto_approval" => $this->auto_approval,
             "description" => $this->description,
             "group_member" => $groupMember,
+            "group_approve" => $groupMeberApprove,
             "created_by" => $user,
-            "user_status" => ($this->created_by == 1) ? 'admin' : 'user',
+            "user_status" => ($this->created_by == Auth::id()) ? 'admin' : 'user',
             "deleted_at" => $this->deleted_at,
             "deleted_by" => $this->deleted_by,
         ];

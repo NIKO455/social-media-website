@@ -14,6 +14,7 @@ import DropdownLinkButton from "@/Components/DropdownLinkButton.vue";
 import MainContent from "@/Pages/Page Components/MainContent.vue";
 import PostCardItem from "@/Components/PostCardItem.vue";
 import GroupContainer from "@/Pages/Group/GroupContainer.vue";
+import FollowersApproval from "@/Pages/Page Components/FollowersApproval.vue";
 
 const {group} = defineProps({group: Object})
 
@@ -68,6 +69,10 @@ function submitCoverImage() {
             coverImageSrc.value = null;
         }
     });
+}
+
+function JoinGroup() {
+    form.post(`/group/join/${group.id}`)
 }
 
 
@@ -202,6 +207,7 @@ function submitCoverImage() {
                                             </Dropdown>
                                         </div>
 
+
                                         <div
                                             class="flex w-full space-x-1 rounded-xl bg-blue-900/20 h-[40px] sm:w-full profiles-links">
                                             <Tab as="template" v-slot="{ selected }">
@@ -213,10 +219,19 @@ function submitCoverImage() {
                                             <Tab as="template" v-slot="{ selected }">
                                                 <TabListItem :category="'Members'" :selected="selected"/>
                                             </Tab>
+                                            <Tab as="template" v-slot="{ selected }"
+                                                 v-if="group.user_status === 'admin'">
+                                                <TabListItem :category="'Join Requests'" :selected="selected"/>
+                                            </Tab>
                                         </div>
                                         <PrimaryButton
-                                            class="w-40 desktop-edit-btn">
+                                            class="w-40 desktop-edit-btn" v-if="group.user_status === 'admin'">
                                             <a :href="route('group.edit', group.id)">Edit Group</a>
+                                        </PrimaryButton>
+
+                                        <PrimaryButton
+                                            class="w-44 desktop-edit-btn" v-else>
+                                            <a @click="JoinGroup">Join Request</a>
                                         </PrimaryButton>
 
                                         <PrimaryButton class="lg:hidden md:hidden profile-edit-button">
@@ -242,7 +257,13 @@ function submitCoverImage() {
                                             </TabPanel>
                                             <TabPanel
                                                 :class="['rounded-xl bg-[#111827] dark:text-white p-3','ring-white/60 ring-offset-0 focus:outline-none focus:ring-0',]">
-                                                <FollowersContainer :user="group.group_member"/>
+                                                <FollowersContainer :isAdmin="group.user_status === 'admin'"
+                                                                    :user="group.group_member"/>
+                                            </TabPanel>
+                                            <TabPanel
+                                                :class="['rounded-xl bg-[#111827] dark:text-white p-3','ring-white/60 ring-offset-0 focus:outline-none focus:ring-0',]"
+                                                v-if="group.user_status === 'admin'">
+                                                <FollowersApproval :user="group.group_approve"/>
                                             </TabPanel>
                                         </TabPanels>
                                     </div>

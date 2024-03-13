@@ -66,6 +66,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/group/cover/update/{id}', 'groupCover')->name('group.cover');
         Route::post('/group/profile/update/{id}', 'groupProfile')->name('group.profile');
         Route::delete('/group/profile/remove/{id}', 'removeGroupProfile')->name('group.profile.remove');
+
+        Route::post('/group/join/{id}', 'joinGroup')->name('group.join');
+        Route::post('/group/accept/{id}', 'acceptGroup')->name('group.accept');
+        Route::post('/group/reject/{id}', 'rejectGroup')->name('group.reject');
     });
 
 
