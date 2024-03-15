@@ -76,38 +76,50 @@ class PostController extends Controller
 
     public function update(Request $request, $slug)
     {
-        $post = Post::where('slug', $slug)->with('attachments')->first();
-        $existingAttachments = count($post->attachments);
+        DB::beginTransaction();
+        try {
+            $post = Post::where('slug', $slug)->with('attachments')->first();
+            $existingAttachments = count($post->attachments);
 
-        if ($request->hasFile('files')) {
-            $allowedUploads = 2 - $existingAttachments;
-            $counter = 0;
-            foreach ($request->file('files') as $file) {
-                if ($counter < $allowedUploads) {
-                    $originalName = $file->getClientOriginalName();
-                    $filenameWithoutExtension = pathinfo($originalName, PATHINFO_FILENAME);
-                    $extension = $file->getClientOriginalExtension();
-                    $fileName = 'media_' . uniqid() . '_' . time() . '.' . $filenameWithoutExtension . '.' . $extension;
-                    $file->storeAs('public/public/posts/', $fileName);
-                    PostAttachment::create([
-                        'post_id' => $post->id,
-                        'path' => $fileName,
-                        'name' => $originalName,
-                        'mime' => $extension,
-                        'created_by' => $post['user_id'],
-                    ]);
-                    $counter++;
-                } else {
-                    break;
+            if ($request->hasFile('files')) {
+                $allowedUploads = 2 - $existingAttachments;
+                $counter = 0;
+                foreach ($request->file('files') as $file) {
+                    if ($counter < $allowedUploads) {
+                        $originalName = $file->getClientOriginalName();
+                        $filenameWithoutExtension = pathinfo($originalName, PATHINFO_FILENAME);
+                        $extension = $file->getClientOriginalExtension();
+                        $fileName = 'media_' . uniqid() . '_' . time() . '.' . $filenameWithoutExtension . '.' . $extension;
+                        $file->storeAs('public/public/posts/', $fileName);
+                        PostAttachment::create([
+                            'post_id' => $post->id,
+                            'path' => $fileName,
+                            'name' => $originalName,
+                            'mime' => $extension,
+                            'created_by' => $post['user_id'],
+                        ]);
+                        $counter++;
+                    } else {
+                        break;
+                    }
                 }
             }
+
+            $post->update([
+                'body' => $request->body
+            ]);
+
+            DB::commit();
+
+            return redirect()->back();
+
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            dd($e->getMessage());
         }
 
-        $post->update([
-            'body' => $request->body
-        ]);
 
-        return redirect()->back();
     }
 
     public function delete($slug)
@@ -232,7 +244,7 @@ class PostController extends Controller
             DB::commit();
             return redirect()->back();
 
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back();
         }

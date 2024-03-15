@@ -28,7 +28,7 @@ class GroupResource extends JsonResource
 
         $groupMeberApprove = GroupUserResource::collection(GroupUser::where("group_id", $this->id)->where('status', GroupUserStatus::PENDING->value)->with('user')->get());
 
-        $groupPost = PostResource::collection(Post::where("group_id", $this->id)->get());
+        $groupPost = PostResource::collection(Post::where("group_id", $this->id)->orderBy('id', 'desc')->get());
 
 
         return [

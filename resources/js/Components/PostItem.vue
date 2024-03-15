@@ -79,7 +79,8 @@ function removeOldImage(index, src) {
 }
 
 function submitPost(slug) {
-    updateForm.post(`update/post/${slug}`, {
+    console.log(updateForm)
+    updateForm.post(`/update/post/${slug}`, {
         onSuccess: () => {
             closeModal();
             updateForm.body = '';
