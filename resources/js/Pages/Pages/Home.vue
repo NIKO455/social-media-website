@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import {Head, usePage} from '@inertiajs/vue3';
+import {Head} from '@inertiajs/vue3';
 import GroupList from "@/Pages/Group/GroupList.vue";
 import FollowerList from "@/Pages/Page Components/FollowerList.vue";
 import MainContent from "@/Pages/Page Components/MainContent.vue";

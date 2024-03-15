@@ -6,8 +6,11 @@ use App\Http\Enums\GroupUserRole;
 use App\Http\Enums\GroupUserStatus;
 use App\Http\Requests\GroupStoreRequest;
 use App\Http\Resources\GroupResource;
+use App\Http\Resources\PostResource;
+use App\Http\Resources\UserResource;
 use App\Models\Group;
 use App\Models\GroupUser;
+use App\Models\Post;
 use App\Models\User;
 use App\Traits\UploadFileTrait;
 use Illuminate\Http\RedirectResponse;
@@ -26,10 +29,11 @@ class GroupController extends Controller
     public function index($group)
     {
         $group = new GroupResource(Group::where('slug', $group)->first());
+        $user = new UserResource(User::findOrFail(Auth::id()));
         if (!Auth::check()) {
             return Inertia::render('Pages/VisitGroup', compact('group'));
         }
-        return Inertia::render('Pages/Group', compact('group'));
+        return Inertia::render('Pages/Group', compact('group','user'));
     }
 
     public function store(GroupStoreRequest $request)

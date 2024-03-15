@@ -33,6 +33,7 @@ class PostController extends Controller
             $post = Post::create([
                 'body' => $data['body'],
                 'user_id' => $data['user_id'],
+                'group_id' => $data['group_id'] ?? null,
                 'slug' => Str::uuid()->toString(),
                 'created_by' => $data['user_id']
             ]);

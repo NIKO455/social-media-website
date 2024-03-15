@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Http\Enums\GroupUserStatus;
 use App\Models\GroupUser;
+use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -27,6 +28,8 @@ class GroupResource extends JsonResource
 
         $groupMeberApprove = GroupUserResource::collection(GroupUser::where("group_id", $this->id)->where('status', GroupUserStatus::PENDING->value)->with('user')->get());
 
+        $groupPost = PostResource::collection(Post::where("group_id", $this->id)->get());
+
 
         return [
             "id" => $this->id,
@@ -38,6 +41,7 @@ class GroupResource extends JsonResource
             "description" => $this->description,
             "group_member" => $groupMember,
             "group_approve" => $groupMeberApprove,
+            "group_post" => $groupPost,
             "created_by" => $user,
             "user_status" => ($this->created_by == Auth::id()) ? 'admin' : 'user',
             "deleted_at" => $this->deleted_at,

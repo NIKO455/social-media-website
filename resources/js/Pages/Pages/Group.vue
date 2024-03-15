@@ -15,8 +15,9 @@ import MainContent from "@/Pages/Page Components/MainContent.vue";
 import PostCardItem from "@/Components/PostCardItem.vue";
 import GroupContainer from "@/Pages/Group/GroupContainer.vue";
 import FollowersApproval from "@/Pages/Page Components/FollowersApproval.vue";
+import GroupPostContainer from "@/Pages/Page Components/GroupPostContainer.vue";
 
-const {group} = defineProps({group: Object})
+const {group,user} = defineProps({group: Object,user:Object});
 
 let coverImageFile = null;
 let profileImageFile = null;
@@ -253,7 +254,8 @@ function JoinGroup() {
                                             </TabPanel>
                                             <TabPanel
                                                 :class="['rounded-xl bg-[#111827] dark:text-white p-3','ring-white/60 ring-offset-0 focus:outline-none focus:ring-0',]">
-                                                Post
+
+                                                <GroupPostContainer :posts="group.group_post" :user="user" :group_id="group.id" />
                                             </TabPanel>
                                             <TabPanel
                                                 :class="['rounded-xl bg-[#111827] dark:text-white p-3','ring-white/60 ring-offset-0 focus:outline-none focus:ring-0',]">

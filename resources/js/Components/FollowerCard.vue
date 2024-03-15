@@ -14,7 +14,7 @@ defineProps({
         <div class="flex flex-col items-center">
             <div :class="[role === 'admin' ? 'admin-avatar' : 'user-avatar']">
                 <img class="w-24 h-24 mb-3 rounded-full shadow-lg object-cover"
-                     :src="image"
+                     :src="image || 'https://i.pinimg.com/736x/8b/16/7a/8b167af653c2399dd93b952a48740620.jpg'"
                      alt="User image"/>
             </div>
             <h5 class="mt-1 text-sm font-medium text-gray-900 dark:text-white">{{ name }}</h5>

@@ -24,6 +24,7 @@ class StorePostRequest extends FormRequest
         return [
             'body' => ['nullable'],
             'user_id' => ['numeric', 'exists:users,id', 'required'],
+            'group_id' => ['numeric', 'exists:groups,id', 'nullable'],
             'files' => ['nullable']
         ];
     }

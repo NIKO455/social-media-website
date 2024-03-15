@@ -17,6 +17,7 @@ class Post extends Model
         'body',
         'user_id',
         'slug',
+        'group_id',
         'created_by',
         'files',
     ];

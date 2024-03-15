@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Group;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -45,14 +46,17 @@ class PostResource extends JsonResource
             ];
         }
 
+        $groupName = $this->group_id ? Group::find($this->group_id)->name : null;
+
+
         return [
             "id" => $this->id,
             "body" => $this->body,
             "slug" => $this->slug,
             "user_id" => $this->user_id,
-            "group_id" => $this->group_id,
+            "group_name" => $groupName,
             "reaction_count" => $this->reactions->count(),
-            "hasLiked"=> (bool)$this->reactions->where('user_id', Auth::id())->where('post_id', $this->id)->first(),
+            "hasLiked" => (bool)$this->reactions->where('user_id', Auth::id())->where('post_id', $this->id)->first(),
             "created_at" => $this->created_at->diffForHumans(),
             "comments" => $comments,
             "attachments" => $attachmentsData,
