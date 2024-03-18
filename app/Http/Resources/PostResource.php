@@ -47,14 +47,18 @@ class PostResource extends JsonResource
         }
 
         $groupName = $this->group_id ? Group::find($this->group_id)->name : null;
+        $groupSlug = $this->group_id ? Group::find($this->group_id)->slug : null;
+
+        $user = new UserResource(User::findOrFail($this->user_id));
 
 
         return [
             "id" => $this->id,
             "body" => $this->body,
             "slug" => $this->slug,
-            "user_id" => $this->user_id,
+            "user_id" => $user,
             "group_name" => $groupName,
+            "group_slug" => $groupSlug,
             "reaction_count" => $this->reactions->count(),
             "hasLiked" => (bool)$this->reactions->where('user_id', Auth::id())->where('post_id', $this->id)->first(),
             "created_at" => $this->created_at->diffForHumans(),

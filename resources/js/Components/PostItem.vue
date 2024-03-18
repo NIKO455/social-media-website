@@ -249,14 +249,14 @@ function editPost(comment) {
         <div class="flex align-item justify-between">
             <div class="flex gap-3">
                 <img
-                    :src="user.avatar_url || 'https://i.pinimg.com/736x/8b/16/7a/8b167af653c2399dd93b952a48740620.jpg'"
+                    :src="post.user_id.avatar_url || 'https://i.pinimg.com/736x/8b/16/7a/8b167af653c2399dd93b952a48740620.jpg'"
                     class="w-12 h-12 rounded object-cover" alt="user-image cursor-pointer"
                 >
                 <div>
                     <div class="text-[15px] font-bold pb-1 flex items-center ">
                         <p class="hover:underline cursor-pointer">
-                            <Link :href="route('profile',$page.props.auth.user.username)">
-                                {{ user.name }}
+                            <Link :href="route('profile',post.user_id.username)">
+                                {{post.user_id.name}}
                             </Link>
                         </p>
                         <template v-if="post.group_name">
@@ -264,14 +264,18 @@ function editPost(comment) {
                                  stroke="currentColor" class="w-4 h-4">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
                             </svg>
-                            <span class="text-green-500 hover:underline cursor-pointer">{{post.group_name}}</span>
+
+                            <Link :href="'/g/' + post.group_slug" class="text-green-500 hover:underline cursor-pointer">{{post.group_name}}</Link>
                         </template>
                     </div>
                     <p class="mt-[-5px] text-sm text-gray-400">{{ post.created_at }}</p>
                 </div>
             </div>
+
+
+
             <div class="relative">
-                <Menu>
+                <Menu v-if="user.id === post.user_id">
                     <MenuButton>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                              stroke="currentColor" class="w-6 h-6">
