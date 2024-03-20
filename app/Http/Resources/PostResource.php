@@ -59,6 +59,7 @@ class PostResource extends JsonResource
             "user_id" => $user,
             "group_name" => $groupName,
             "group_slug" => $groupSlug,
+            "group_admin" => $this->group_id && Group::find($this->group_id)->created_by == $this->user_id,
             "reaction_count" => $this->reactions->count(),
             "hasLiked" => (bool)$this->reactions->where('user_id', Auth::id())->where('post_id', $this->id)->first(),
             "created_at" => $this->created_at->diffForHumans(),

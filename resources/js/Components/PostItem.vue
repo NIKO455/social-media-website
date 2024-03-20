@@ -272,10 +272,10 @@ function editPost(comment) {
                 </div>
             </div>
 
-
+            {{user.role}}
 
             <div class="relative">
-                <Menu v-if="user.id === post.user_id">
+                <Menu v-if="user.id === post.user_id.id">
                     <MenuButton>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                              stroke="currentColor" class="w-6 h-6">
@@ -414,9 +414,10 @@ function editPost(comment) {
                             <p class="text-sm text-gray-400">{{ comment.created_at }}</p>
                         </div>
                     </div>
+
                     <div>
                         <div class="relative">
-                            <Menu>
+                            <Menu v-if="$page.props.auth.user.id === comment.user.id">
                                 <MenuButton>
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                          stroke-width="1.5"
